@@ -1,0 +1,88 @@
+.tour__content img {
+  width: 100%;
+  border-radius: 0.5rem;
+  object-fit: cover;
+  margin-bottom: 2.5rem;
+}
+
+.tour__info,
+.tour__reviews {
+  border: 1px solid rgba(229, 231, 235);
+  border-radius: 0.5rem;
+  padding: 2rem;
+}
+
+.tour__info h2 {
+  font-size: 1.5rem;
+}
+
+.tour__info span {
+  display: block;
+  align-items: center;
+  column-gap: 0.5rem;
+  font-size: 1rem;
+  color: var(--heading-color);
+}
+
+.tour__info span i {
+  color: var(--heading-color);
+  font-size: 1.2rem;
+}
+.tour__extra-details {
+  display: flex;
+  align-items: center;
+  column-gap: 2.7rem;
+  margin-top: 1rem;
+  margin-bottom: 2.5rem;
+}
+.tour__info h5 {
+  margin-bottom: 1rem;
+  font-size: 1.3rem;
+}
+.tour__info p {
+  line-height: 30px;
+  font-size: 1rem;
+  color: var(--text-color);
+}
+.tour__reviews {
+  margin-top: 1.5rem;
+}
+.rating__group span {
+  display: flex;
+  align-items: center;
+  /* column-gap: 0.5rem; */
+  font-size: 1.1rem;
+  color: var(--heading-color);
+  cursor: pointer;
+}
+.tour__reviews h4 {
+  margin-bottom: 3rem;
+}
+.review__input {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.7rem;
+  border-radius: 2rem;
+  border: 1px solid var(--secondary-color);
+  margin-bottom: 1.5rem;
+}
+.review__input input {
+  width: 100%;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  color: var(--text-color);
+  resize: none;
+  padding: 0 1rem;
+}
+.review__input button {
+  padding: 0.7rem 1.5rem;
+  border: none;
+  border-radius: 2rem;
+  background: var(--secondary-color);
+  color: var(--white-color);
+  font-size: 1rem;
+  cursor: pointer;
+}

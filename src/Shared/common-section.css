@@ -1,0 +1,38 @@
+.common__section {
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+    url('../assets//images/tour.jpg') center/cover no-repeat;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.common__section h1 {
+  color: #fff;
+  font-size: 2.4rem;
+  font-weight: 600;
+}
+.pagination span {
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid var(--secondary-color);
+  color: var(--heading-color);
+  cursor: pointer;
+  margin: 0 5px;
+  padding: 5px;
+  transition: all 0.3s ease;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+.pagination span:hover {
+  background-color: var(--secondary-color);
+  color: #fff !important;
+}
+.active__page {
+  background-color: var(--secondary-color);
+  color: #fff !important  ;
+}
