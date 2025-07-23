@@ -4,12 +4,14 @@ import tours from '../assets/data/tours';
 import '../styles/tour-details.css';
 import calculateAvgRating from '../utils/avgRating';
 import avatar from '../assets/images/avatar.jpg';
+import { useState, useRef } from 'react';
+import Booking from '../components/Booking/Booking';
 
 const TourDetails = () => {
+  const [tourRating, setTourRating] = useState(0);
+  const reviewMsgRef = useRef('');
   const { id } = useParams();
-  console.log(id);
   const tour = tours.find((tour) => tour.id === id);
-  console.log(tour);
   const {
     photo,
     title,
@@ -22,6 +24,24 @@ const TourDetails = () => {
     maxGroupSize,
   } = tour;
   const { avgRating, totalRating } = calculateAvgRating(reviews);
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  // submit request to the server
+  const submitHandler = (e) => {
+    e.preventDefault();
+    const reviewText = reviewMsgRef.current.value;
+    // later we will get from API
+    // if (reviewText.trim() === '') return;
+    // const newReview = {
+    //   id: Math.random(),
+    //   name: 'MoTaz',
+    //   review: reviewText,
+    //   rating: tourRating,
+    //   date: new Date().toDateString('en-US', options),
+    // };
+    // console.log(newReview);
+    console.log(reviewText, tourRating);
+    alert(`Review submitted ${reviewText} and total rating is ${tourRating}`);
+  };
   return (
     <section>
       <Container>
@@ -53,7 +73,11 @@ const TourDetails = () => {
                     <i class='ri-map-pin-2-line'></i> {city}
                   </span>
                   <span>
-                    <i class='ri-map-money-dollar-line'></i> ${price} / person
+                    <i class='ri-money-dollar-circle-line'></i> ${price} /
+                    person
+                  </span>
+                  <span>
+                    <i class='ri-map-pin-time-line'></i> {distance} km
                   </span>
                   <span>
                     <i class='ri-group-line'></i> {maxGroupSize}
@@ -65,26 +89,31 @@ const TourDetails = () => {
               {/* Reviews */}
               <div className='tour__reviews'>
                 <h5>Reviews ({reviews?.length} reviews)</h5>
-                <Form>
-                  <div className='d-flex align-items-center gap-3 mb-4 rating__group'>
-                    <span>
-                      1 <i class='ri-star-s-fill'></i>
+                <Form onSubmit={submitHandler}>
+                  <div className='d-flex align-items-center gap-1 mb-4 rating__group'>
+                    <span onClick={() => setTourRating(1)}>
+                      <i class='ri-star-s-fill'></i>
                     </span>
-                    <span>
-                      2 <i class='ri-star-s-fill'></i>
+                    <span onClick={() => setTourRating(2)}>
+                      <i class='ri-star-s-fill'></i>
                     </span>
-                    <span>
-                      3 <i class='ri-star-s-fill'></i>
+                    <span onClick={() => setTourRating(3)}>
+                      <i class='ri-star-s-fill'></i>
                     </span>
-                    <span>
-                      4 <i class='ri-star-s-fill'></i>
+                    <span onClick={() => setTourRating(4)}>
+                      <i class='ri-star-s-fill'></i>
                     </span>
-                    <span>
-                      5 <i class='ri-star-s-fill'></i>
+                    <span onClick={() => setTourRating(5)}>
+                      <i class='ri-star-s-fill'></i>
                     </span>
                   </div>
                   <div className='review__input'>
-                    <input type='text' placeholder='Share your thoughts' />
+                    <input
+                      type='text'
+                      placeholder='Share your thoughts'
+                      ref={reviewMsgRef}
+                      required
+                    />
                     <button
                       className='btn primary__btn text-white'
                       type='submit'
@@ -116,21 +145,35 @@ const TourDetails = () => {
 
                     <div className='review__item' key={index}>
                       <img src={avatar} alt='avatar image' />
-                      <div className='w-100'>
+                      <div className='w-100 review__content'>
                         <div className='d-flex align-items-center justify-content-between'>
                           <div>
-                            <h6>{review.userName}</h6>
+                            <h6>{review.name}</h6>
                             <p>
-                              {new Date('2023-07-07').toDateString('en-US')}
+                              {new Date('2023-07-07').toDateString(
+                                'en-US',
+                                options
+                              )}
                             </p>
                           </div>
+                          <span className='d-flex align-items-center gap-1'>
+                            <i
+                              class='ri-star-fill'
+                              style={{ color: 'var(--secondary-color)' }}
+                            ></i>{' '}
+                            {review.rating}
+                          </span>
                         </div>
+                        <h5>{review.review}</h5>
                       </div>
                     </div>
                   ))}
                 </ListGroup>
               </div>
             </div>
+          </Col>
+          <Col lg='4'>
+            <Booking tour={tour} avgRating={avgRating} />
           </Col>
         </Row>
       </Container>

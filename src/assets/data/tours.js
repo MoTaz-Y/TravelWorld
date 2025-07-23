@@ -39,6 +39,7 @@ const tours = [
       {
         name: 'jhon doe',
         rating: 4.6,
+        review: 'this was an amzing experience',
       },
     ],
     avgRating: 4.5,
@@ -58,6 +59,7 @@ const tours = [
       {
         name: 'jhon doe',
         rating: 4.6,
+        review: 'this was such an amzing tour',
       },
     ],
     avgRating: 4.5,
@@ -77,6 +79,7 @@ const tours = [
       {
         name: 'jhon doe',
         rating: 4.6,
+        review: 'great experience',
       },
     ],
     avgRating: 4.5,
@@ -96,6 +99,7 @@ const tours = [
       {
         name: 'jhon doe',
         rating: 4.6,
+        review: 'this was an amzing experience',
       },
     ],
     avgRating: 4.5,
@@ -115,6 +119,7 @@ const tours = [
       {
         name: 'jhon doe',
         rating: 4.6,
+        review: 'this was an amzing experience',
       },
     ],
     avgRating: 4.5,
@@ -134,6 +139,7 @@ const tours = [
       {
         name: 'jhon doe',
         rating: 4.6,
+        review: 'this was an amzing experience',
       },
     ],
     avgRating: 4.5,
@@ -153,6 +159,7 @@ const tours = [
       {
         name: 'jhon doe',
         rating: 4.6,
+        review: 'this was an amzing experience',
       },
     ],
     avgRating: 4.5,
