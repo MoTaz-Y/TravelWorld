@@ -1,10 +1,20 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
+const validationSchema = require('../middleware/validations/validationSchema');
+const verifyToken = require('../middleware/verifyToken');
 
-router.post('/register', userController.registerUser);
-router.post('/login', userController.loginUser);
-router.get('/profile', userController.getUserProfile);
-router.put('/update', userController.updateUserProfile);
+router.post(
+  '/register',
+  validationSchema.SignupValidation,
+  userController.registerUser
+);
+router.post(
+  '/login',
+  validationSchema.SigninValidation,
+  userController.loginUser
+);
+router.get('/profile', verifyToken, userController.getUserProfile);
+router.put('/update', verifyToken, userController.updateUserProfile);
 
 module.exports = router;
