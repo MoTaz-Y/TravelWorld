@@ -6,6 +6,9 @@ const allowedTo = require('../middleware/allowedTo.js');
 const userRoles = require('../utils/userRoles');
 
 router.get('/', tourController.getAllTours);
+router.get('/search', tourController.tourSearch);
+router.get('/featured', tourController.tourFeatured);
+router.get('/count', tourController.tourCount);
 router.get('/:id', tourController.getSingleTour);
 router.post(
   '/',
