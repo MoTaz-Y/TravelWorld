@@ -3,6 +3,7 @@ const config = require('config');
 const appError = require('../utils/appError');
 const httpStatusText = require('../utils/httpStatusText');
 
+config();
 const verifyToken = (req, res, next) => {
   const authHeader =
     req.headers['authorization'] || req.headers['Authorization'];

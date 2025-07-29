@@ -27,25 +27,10 @@ export const UserValidation = z.object({
       message: 'Too long',
     }),
 });
-export const SignupValidation = z.object({
-  name: z
-    .string()
-    .min(2, {
-      message: 'Too short',
-    })
-    .max(50, {
-      message: 'Too long',
-    }),
-  username: z
-    .string()
-    .min(2, {
-      message: 'Too short',
-    })
-    .max(50, {
-      message: 'Too long',
-    }),
-  email: z.string().email(),
-  password: z
+export const UserUpdateValidation = UserValidation.partial();
+
+export const UpdatePasswordValidation = z.object({
+  oldPassword: z
     .string()
     .min(8, {
       message: 'Password must be at least 8 characters',
@@ -53,6 +38,26 @@ export const SignupValidation = z.object({
     .max(50, {
       message: 'Too long',
     }),
+  newPassword: z
+    .string()
+    .min(8, {
+      message: 'Password must be at least 8 characters',
+    })
+    .max(50, {
+      message: 'Too long',
+    }),
+  newPasswordConfirm: z
+    .string()
+    .min(8, {
+      message: 'Password must be at least 8 characters',
+    })
+    .max(50, {
+      message: 'Too long',
+    }),
+});
+
+export const ForgotPasswordValidation = z.object({
+  email: z.string().email(),
 });
 export const SigninValidation = z.object({
   email: z.string().email(),

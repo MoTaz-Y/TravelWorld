@@ -28,10 +28,6 @@ const hashPassword = async (password) => {
 const comparePassword = (password, hashedPassword) => {
   return bcrypt.compare(password, hashedPassword);
 };
-const validateMongoDbId = (id) => {
-  const isValid = mongoose.Types.ObjectId.isValid(id);
-  if (!isValid) throw new Error('User not found');
-};
 module.exports = {
   generateToken,
   generateRefreshToken,
@@ -39,5 +35,4 @@ module.exports = {
   verifyRefreshToken,
   hashPassword,
   comparePassword,
-  validateMongoDbId,
 };
