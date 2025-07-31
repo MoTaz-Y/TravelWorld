@@ -1,6 +1,6 @@
-const catchAsync = require('../utils/catchAsync');
-const AppError = require('../utils/appError');
-const APIFeatures = require('../utils/apiFeatures');
+const catchAsync = require('../../middleware/catchAsync');
+const AppError = require('../../utils/appError');
+const APIFeatures = require('../../utils/apiFeatures');
 
 // delete one booking done
 // localhost:3000/api/bookings/5c88fa8f3e87471c159a0e96 DELETE

@@ -1,11 +1,11 @@
-const User = require('../models/userModel');
+const User = require('../../models/userModel');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const catchAsync = require('../middleware/catchAsync');
-const { generateToken } = require('../config/jwtToken');
-const validateMongoDbId = require('../utils/validateMongodbId');
+const catchAsync = require('../../middleware/catchAsync');
+const { generateToken } = require('../../config/jwtToken');
+const validateMongoDbId = require('../../utils/validateMongodbId');
 const factory = require('./userHandlerFactory');
-const authFactory = require('./users/authHandlerFactory.js');
+const authFactory = require('./authHandlerFactory');
 // const { generateRefreshToken } = require('../config/refreshtoken');
 // const sendEmail = require('./emailController');
 // const crypto = require('crypto');

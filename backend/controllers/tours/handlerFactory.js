@@ -1,7 +1,7 @@
-const catchAsync = require('../middleware/catchAsync');
-const AppError = require('../utils/appError');
-const httpStatusText = require('../utils/httpStatusText');
-const APIFeatures = require('../utils/apiFeatures');
+const catchAsync = require('../../middleware/catchAsync');
+const AppError = require('../../utils/appError');
+const httpStatusText = require('../../utils/httpStatusText');
+const APIFeatures = require('../../utils/apiFeatures');
 const { parse } = require('zod');
 
 // get all tours done

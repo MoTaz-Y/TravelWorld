@@ -1,6 +1,6 @@
-const Booking = require('../../models/bookingsModel');
+const Booking = require('../../models/bookingModel');
 const Tour = require('../../models/tourModel');
-const factory = require('../handlers/handlerFactory');
+const factory = require('./handlerFactory');
 
 exports.getBookings = factory.getAll(Booking);
 exports.getBooking = factory.getOne(Booking);

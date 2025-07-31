@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const AppError = require('../utils/appError');
-const catchAsync = require('../utils/catchAsync');
+const catchAsync = require('../middleware/catchAsync');
 const httpStatusText = require('../utils/httpStatusText');
 
 const comparePassword = catchAsync(async (password, hashedPassword) => {

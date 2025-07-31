@@ -1,6 +1,6 @@
-const Review = require('../../models/reviews/reviewsModel');
+const Review = require('../../models/reviewsModel');
 const Tour = require('../../models/tourModel');
-const factory = require('../handlerFactory');
+const factory = require('./handlerFactory.js');
 
 exports.setTourUserIds = (req, res, next) => {
   //Allow nested routes

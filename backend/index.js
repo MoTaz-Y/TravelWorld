@@ -12,10 +12,10 @@ import { connectDB } from './config/db.js'; //
 import { errorHandler } from './middleware/errorMiddleware.js'; //
 import { notFound } from './middleware/notFoundMiddleware.js'; //
 
-import userRoutes from './routes/userRoutes.js'; //
+import userRoutes from './routes/userRoutes.js';
 import tourRoutes from './routes/tourRoutes.js';
-// import reviewRoutes from './routes/reviewRoutes.js';//
-// import bookingRoutes from './routes/bookingRoutes.js';//
+import reviewRoutes from './routes/reviewsRoutes.js';
+import bookingRoutes from './routes/bookingsRoutes.js';
 // import paymentRoutes from './routes/paymentRoutes.js';//
 
 const __filename = fileURLToPath(import.meta.url); //

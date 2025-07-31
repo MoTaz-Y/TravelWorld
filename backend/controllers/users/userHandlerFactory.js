@@ -1,8 +1,8 @@
-const User = require('../models/userModel');
-const catchAsync = require('../utils/catchAsync');
-const AppError = require('../utils/appError');
-const ApiFeatures = require('../utils/apiFeatures');
-const httpStatusText = require('../utils/httpStatusText');
+const User = require('../../models/userModel');
+const catchAsync = require('../../middleware/catchAsync');
+const AppError = require('../../utils/appError');
+const ApiFeatures = require('../../utils/apiFeatures');
+const httpStatusText = require('../../utils/httpStatusText');
 
 // get all users done
 //localhost:3000/api/users?limit=2&sort=-name&fields=name,email GET

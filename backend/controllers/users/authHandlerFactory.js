@@ -1,5 +1,5 @@
 const User = require('../../models/userModel');
-const catchAsync = require('../utils/catchAsync');
+const catchAsync = require('../../utils/catchAsync');
 const AppError = require('../../utils/appError');
 const ApiFeatures = require('../../utils/apiFeatures');
 const httpStatusText = require('../../utils/httpStatusText');

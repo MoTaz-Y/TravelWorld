@@ -6,10 +6,10 @@ const {
   addReview,
   updateReview,
   deleteReview,
-} = require('../controllers/reviewsController');
+} = require('../controllers/reviews/reviewsController');
 const verifyToken = require('../middleware/verifyToken');
 const allowedTo = require('../middleware/allowedTo');
-const ROLES = require('../utils/roles');
+const ROLES = require('../utils/userRoles');
 
 router
   .route('/tour/:tourId')

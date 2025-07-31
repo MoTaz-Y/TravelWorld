@@ -1,9 +1,9 @@
-const catchAsync = require('../utils/catchAsync');
-const AppError = require('../utils/appError');
-const APIFeatures = require('../utils/apiFeatures');
+const catchAsync = require('../../middleware/catchAsync');
+const AppError = require('../../utils/appError');
+const APIFeatures = require('../../utils/apiFeatures');
 
 // get all reviews
-// localhost:3000/api/reviews/tours/5c88fa8f3e87471c159a0e96/reviews
+// localhost:3000/api/reviews/tours/5c88fa8f3e87471c159a0e96 GET
 exports.getAll = (Model) =>
   catchAsync(async (req, res, next) => {
     const tourId = req.params.tourId;
@@ -27,7 +27,7 @@ exports.getAll = (Model) =>
     });
   });
 // get one revie
-// localhost:3000/api/reviews/5c88fa8f3e87471c159a0e96
+// localhost:3000/api/reviews/5c88fa8f3e87471c159a0e96 GET
 exports.getOne = (Model) =>
   catchAsync(async (req, res, next) => {
     const review = await Model.findById(req.params.id);
@@ -71,7 +71,7 @@ exports.createOne = (Model, Tour) =>
   });
 
 // update review
-// localhost:3000/api/reviews/5c88fa8f3e87471c159a0e96 PATCH
+// localhost:3000/api/reviews/5c88fa8f3e87471c159a0e96 PUT
 exports.updateOne = (Model) =>
   catchAsync(async (req, res, next) => {
     const review = await Model.findByIdAndUpdate(req.params.id, req.body, {
