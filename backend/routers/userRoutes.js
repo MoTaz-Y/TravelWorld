@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const userController = require('../controllers/userController');
+const userController = require('../controllers/users/userController');
 const validationSchema = require('../middleware/validations/validationSchema');
 const verifyToken = require('../middleware/verifyToken');
 const allowedTo = require('../middleware/allowedTo');
@@ -56,13 +56,13 @@ router.post(
 //protected admin routes
 router.get(
   '/',
-  verifyToken,
+  verifyToken.verifyUser,
   allowedTo(userRoles.ADMIN),
   userController.getAllUsers
 );
 router.post(
   '/',
-  verifyToken,
+  verifyToken.verifyUser,
   allowedTo(userRoles.ADMIN),
   validationSchema.UserValidation,
   userController.createUser
@@ -70,20 +70,20 @@ router.post(
 
 router.get(
   '/:id',
-  verifyToken,
+  verifyToken.verifyUser,
   allowedTo(userRoles.ADMIN),
   userController.getSingleUser
 );
 router.patch(
   '/:id',
-  verifyToken,
+  verifyToken.verifyUser,
   allowedTo(userRoles.ADMIN),
   validationSchema.UserUpdateValidation,
   userController.updateUser
 );
 router.delete(
   '/:id',
-  verifyToken,
+  verifyToken.verifyUser,
   allowedTo(userRoles.ADMIN),
   userController.deleteUser
 );

@@ -1,21 +1,21 @@
-const User = require('../models/userModel');
+const User = require('../../models/userModel');
 const catchAsync = require('../utils/catchAsync');
-const AppError = require('../utils/appError');
-const ApiFeatures = require('../utils/apiFeatures');
-const httpStatusText = require('../utils/httpStatusText');
+const AppError = require('../../utils/appError');
+const ApiFeatures = require('../../utils/apiFeatures');
+const httpStatusText = require('../../utils/httpStatusText');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
-const { generateToken } = require('../config/jwtToken');
-const comparePassword = require('../utils/comparePassword');
-const validateMongodbId = require('../utils/validateMongodbId');
+const { generateToken } = require('../../config/jwtToken');
+const comparePassword = require('../../utils/comparePassword');
+const validateMongodbId = require('../../utils/validateMongodbId');
 
 // Register User Done
 // localhost:3000/api/auth/register Post
 const registerUser = (User) =>
   catchAsync(async (req, res, next) => {
-    const { name, email, password, passwordConfirm, phone, role } = req.body;
-    if (!name || !email || !password || !passwordConfirm || !phone || !role) {
+    const { name, email, password, passwordConfirm, phone, photo } = req.body;
+    if (!name || !email || !password || !passwordConfirm || !phone || !photo) {
       return next(
         new AppError(
           'Please provide all required fields',
@@ -53,14 +53,14 @@ const registerUser = (User) =>
         name: newUser.name,
         email: newUser.email,
         phone: newUser.phone,
-        role: newUser.role,
+        photo: newUser.photo,
         token: generateToken(newUser._id),
       },
     });
   });
 
 // Login User Done
-// localhost:3000/api/auth/login Post
+// localhost:3000/api/users/login Post
 const loginUser = (User) =>
   catchAsync(async (req, res, next) => {
     const { email, password } = req.body;
@@ -85,22 +85,31 @@ const loginUser = (User) =>
         new AppError('Incorrect password', 400, httpStatusText.BAD_REQUEST)
       );
     }
-    res.status(200).json({
-      status: 'success',
-      message: 'User logged in successfully',
-      data: {
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        phone: user.phone,
-        role: user.role,
-        token: generateToken(user._id),
-      },
-    });
+    const token = generateToken(user._id);
+
+    res
+      .cookie('accessToken', token, {
+        httpOnly: true,
+        secure: true,
+        expires: process.env.JWT_COOKIE_EXPIRE,
+      })
+      .status(200)
+      .json({
+        status: 'success',
+        message: 'User logged in successfully',
+        data: {
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          phone: user.phone,
+          role: user.role,
+          token: token,
+        },
+      });
   });
 
 // Logout User Done
-// localhost:3000/api/auth/logout Get
+// localhost:3000/api/users/logout Get
 const logoutUser = (User) =>
   catchAsync(async (req, res, next) => {
     const cookies = req.cookies;
@@ -132,7 +141,7 @@ const logoutUser = (User) =>
   });
 
 // handle refresh token Done
-// localhost:3000/api/auth/refresh-token Get
+// localhost:3000/api/users/refresh-token Get
 const handleRefreshToken = (User) =>
   catchAsync(async (req, res, next) => {
     const cookie = req.cookies;
@@ -164,7 +173,7 @@ const handleRefreshToken = (User) =>
   });
 
 // update password Done
-// localhost:3000/api/auth/update-password Post
+// localhost:3000/api/users/update-password Post
 const updatePassword = (User) =>
   catchAsync(async (req, res, next) => {
     const { _id } = req.user;
@@ -195,7 +204,7 @@ const updatePassword = (User) =>
   });
 
 // get user profile Done
-// localhost:3000/api/auth/me Get
+// localhost:3000/api/users/me Get
 const getUserProfile = (User) =>
   catchAsync(async (req, res, next) => {
     const { _id } = req.user;
@@ -214,7 +223,7 @@ const getUserProfile = (User) =>
   });
 
 // update user profile Done
-// localhost:3000/api/auth/me Put
+// localhost:3000/api/users/me Put
 const updateUserProfile = (User) =>
   catchAsync(async (req, res, next) => {
     const { _id } = req.user;
@@ -235,6 +244,35 @@ const updateUserProfile = (User) =>
     });
   });
 
+// forget password Done
+// localhost:3000/api/users/forgot-password Post
+const forgotPassword = (User) =>
+  catchAsync(async (req, res, next) => {
+    const { email } = req.body;
+    if (!email) {
+      return next(
+        new AppError(
+          'Please provide all required fields',
+          400,
+          httpStatusText.BAD_REQUEST
+        )
+      );
+    }
+    const user = await User.findOne({ email });
+    if (!user) {
+      return next(
+        new AppError('User not found', 400, httpStatusText.BAD_REQUEST)
+      );
+    }
+    const resetToken = user.createPasswordResetToken();
+    await user.save({ validateBeforeSave: false });
+    res.status(200).json({
+      status: 'success',
+      message: 'Reset token sent to email',
+      data: resetToken,
+    });
+  });
+
 module.exports = {
   registerUser,
   loginUser,
@@ -243,4 +281,5 @@ module.exports = {
   updatePassword,
   getUserProfile,
   updateUserProfile,
+  forgotPassword,
 };

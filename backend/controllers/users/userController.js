@@ -5,7 +5,7 @@ const catchAsync = require('../middleware/catchAsync');
 const { generateToken } = require('../config/jwtToken');
 const validateMongoDbId = require('../utils/validateMongodbId');
 const factory = require('./userHandlerFactory');
-const authFactory = require('./authHandlerFactory.js');
+const authFactory = require('./users/authHandlerFactory.js');
 // const { generateRefreshToken } = require('../config/refreshtoken');
 // const sendEmail = require('./emailController');
 // const crypto = require('crypto');
@@ -26,6 +26,8 @@ const handleRefreshToken = authFactory.handleRefreshToken(User);
 const getUserProfile = authFactory.getUserProfile(User);
 const updateUserProfile = authFactory.updateUserProfile(User);
 const refreshToken = authFactory.handleRefreshToken(User);
+const forgotPassword = authFactory.forgotPassword(User);
+
 module.exports = {
   registerUser,
   loginUser,
@@ -40,4 +42,5 @@ module.exports = {
   getUserProfile,
   updateUserProfile,
   refreshToken,
+  forgotPassword,
 };
