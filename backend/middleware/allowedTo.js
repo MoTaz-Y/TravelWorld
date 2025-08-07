@@ -1,4 +1,4 @@
-const appError = require('../utils/appError');
+import appError from '../utils/appError.js';
 
 const allowedTo = (...roles) => {
   return (req, res, next) => {
@@ -11,4 +11,4 @@ const allowedTo = (...roles) => {
   };
 };
 
-module.exports = allowedTo;
+export default allowedTo;

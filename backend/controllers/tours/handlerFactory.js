@@ -1,8 +1,8 @@
-const catchAsync = require('../../middleware/catchAsync');
-const AppError = require('../../utils/appError');
-const httpStatusText = require('../../utils/httpStatusText');
-const APIFeatures = require('../../utils/apiFeatures');
-const { parse } = require('zod');
+import catchAsync from '../../middleware/catchAsync.js';
+import AppError from '../../utils/appError.js';
+import httpStatusText from '../../utils/httpStatusText.js';
+import APIFeatures from '../../utils/apiFeatures.js';
+import { parse } from 'zod';
 
 // get all tours done
 //localhost:3000/api/tours?limit=10&sort=-price&fields=name,price GET
@@ -183,7 +183,7 @@ const deleteOne = (Model) =>
     });
   });
 
-module.exports = {
+export default {
   getAll,
   getOne,
   getSearch,

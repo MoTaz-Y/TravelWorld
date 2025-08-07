@@ -1,9 +1,9 @@
-const jwt = require('jsonwebtoken');
-const config = require('config');
-const appError = require('../utils/appError');
-const httpStatusText = require('../utils/httpStatusText');
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+dotenv.config();
+import appError from '../utils/appError.js';
+import httpStatusText from '../utils/httpStatusText.js';
 
-config();
 const verifyToken = (req, res, next) => {
   const token =
     req.cookies.accessToken || req.header('Authorization') || req.body.token;
@@ -65,4 +65,4 @@ const verifyAdmin = (req, res, next) => {
   });
 };
 
-module.exports = { verifyToken, verifyUser, verifyAdmin };
+export default { verifyToken, verifyUser, verifyAdmin };

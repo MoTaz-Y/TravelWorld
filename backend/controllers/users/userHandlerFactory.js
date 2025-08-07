@@ -1,12 +1,12 @@
-const User = require('../../models/userModel');
-const catchAsync = require('../../middleware/catchAsync');
-const AppError = require('../../utils/appError');
-const ApiFeatures = require('../../utils/apiFeatures');
-const httpStatusText = require('../../utils/httpStatusText');
+import User from '../../models/userModel.js';
+import catchAsync from '../../middleware/catchAsync.js';
+import AppError from '../../utils/appError.js';
+import ApiFeatures from '../../utils/apiFeatures.js';
+import httpStatusText from '../../utils/httpStatusText.js';
 
 // get all users done
 //localhost:3000/api/users?limit=2&sort=-name&fields=name,email GET
-getAll = (User) =>
+const getAll = (User) =>
   catchAsync(async (req, res, next) => {
     const features = new ApiFeatures(User.find(), req.query)
       .filter()
@@ -30,7 +30,7 @@ getAll = (User) =>
 
 // get user by id done
 //localhost:3000/api/users/5c88fa8f3e87471c159a0e96 GET
-getOne = (User) =>
+const getOne = (User) =>
   catchAsync(async (req, res, next) => {
     const user = await User.findById(req.params.id);
     if (!user) {
@@ -46,7 +46,7 @@ getOne = (User) =>
 
 // create user done
 //localhost:3000/api/users POST
-createOne = (User) =>
+const createOne = (User) =>
   catchAsync(async (req, res, next) => {
     const newUser = await User.create(req.body);
     res.status(201).json({
@@ -59,7 +59,7 @@ createOne = (User) =>
 
 // update user done
 //localhost:3000/api/users/5c88fa8f3e87471c159a0e96 PATCH
-updateOne = (User) =>
+const updateOne = (User) =>
   catchAsync(async (req, res, next) => {
     const user = await User.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
@@ -78,7 +78,7 @@ updateOne = (User) =>
 
 // delete user done
 //localhost:3000/api/users/5c88fa8f3e87471c159a0e96 DELETE
-deleteOne = (User) =>
+const deleteOne = (User) =>
   catchAsync(async (req, res, next) => {
     const user = await User.findByIdAndDelete(req.params.id);
     if (!user) {
@@ -90,10 +90,10 @@ deleteOne = (User) =>
     });
   });
 
-module.exports = {
-  getAll: getAll(User),
-  getOne: getOne(User),
-  createOne: createOne(User),
-  updateOne: updateOne(User),
-  deleteOne: deleteOne(User),
+export default {
+  getAll,
+  getOne,
+  createOne,
+  updateOne,
+  deleteOne,
 };

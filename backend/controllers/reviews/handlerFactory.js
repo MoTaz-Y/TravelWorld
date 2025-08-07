@@ -1,10 +1,10 @@
-const catchAsync = require('../../middleware/catchAsync');
-const AppError = require('../../utils/appError');
-const APIFeatures = require('../../utils/apiFeatures');
+import catchAsync from '../../middleware/catchAsync.js';
+import AppError from '../../utils/appError.js';
+import APIFeatures from '../../utils/apiFeatures.js';
 
 // get all reviews
 // localhost:3000/api/reviews/tours/5c88fa8f3e87471c159a0e96 GET
-exports.getAll = (Model) =>
+const getAll = (Model) =>
   catchAsync(async (req, res, next) => {
     const tourId = req.params.tourId;
     if (!tourId) {
@@ -28,7 +28,7 @@ exports.getAll = (Model) =>
   });
 // get one revie
 // localhost:3000/api/reviews/5c88fa8f3e87471c159a0e96 GET
-exports.getOne = (Model) =>
+const getOne = (Model) =>
   catchAsync(async (req, res, next) => {
     const review = await Model.findById(req.params.id);
     if (!review) {
@@ -43,7 +43,7 @@ exports.getOne = (Model) =>
   });
 // create review
 // localhost:3000/api/reviews/tours/5c88fa8f3e87471c159a0e96 POST
-exports.createOne = (Model, Tour) =>
+const createOne = (Model, Tour) =>
   catchAsync(async (req, res, next) => {
     const tourId = req.params.tourId;
     if (!tourId) {
@@ -72,7 +72,7 @@ exports.createOne = (Model, Tour) =>
 
 // update review
 // localhost:3000/api/reviews/5c88fa8f3e87471c159a0e96 PUT
-exports.updateOne = (Model) =>
+const updateOne = (Model) =>
   catchAsync(async (req, res, next) => {
     const review = await Model.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
@@ -90,7 +90,7 @@ exports.updateOne = (Model) =>
   });
 // delete review
 // localhost:3000/api/reviews/5c88fa8f3e87471c159a0e96 DELETE
-exports.deleteOne = (Model) =>
+const deleteOne = (Model) =>
   catchAsync(async (req, res, next) => {
     const review = await Model.findByIdAndDelete(req.params.id);
     if (!review) {
@@ -102,8 +102,18 @@ exports.deleteOne = (Model) =>
     });
   });
 
-exports.setTourUserIds = (req, res, next) => {
+const setTourUserIds = (req, res, next) => {
   if (!req.body.tour) req.body.tour = req.params.tourId;
   if (!req.body.user) req.body.user = req.user.id;
   next();
 };
+
+const factory = {
+  getAll,
+  getOne,
+  createOne,
+  updateOne,
+  deleteOne,
+  setTourUserIds,
+};
+export default factory;

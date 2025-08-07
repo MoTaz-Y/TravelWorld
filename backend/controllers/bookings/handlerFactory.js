@@ -1,10 +1,10 @@
-const catchAsync = require('../../middleware/catchAsync');
-const AppError = require('../../utils/appError');
-const APIFeatures = require('../../utils/apiFeatures');
+import catchAsync from '../../middleware/catchAsync.js';
+import AppError from '../../utils/appError.js';
+import APIFeatures from '../../utils/apiFeatures.js';
 
 // delete one booking done
 // localhost:3000/api/bookings/5c88fa8f3e87471c159a0e96 DELETE
-exports.deleteOne = (Model) =>
+const deleteOne = (Model) =>
   catchAsync(async (req, res, next) => {
     const doc = await Model.findByIdAndDelete(req.params.id);
     if (!doc) {
@@ -18,7 +18,7 @@ exports.deleteOne = (Model) =>
 
 // update one booking done
 // localhost:3000/api/bookings/5c88fa8f3e87471c159a0e96 PUT
-exports.updateOne = (Model) =>
+const updateOne = (Model) =>
   catchAsync(async (req, res, next) => {
     const doc = await Model.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
@@ -37,7 +37,7 @@ exports.updateOne = (Model) =>
 
 // create one booking done
 // localhost:3000/api/bookings/tours/5c88fa8f3e87471c159a0e96 POST
-exports.createOne = (Model, tourModel) =>
+const createOne = (Model, tourModel) =>
   catchAsync(async (req, res, next) => {
     const tourId = req.params.tourId;
     const tour = await tourModel.findById(tourId);
@@ -59,7 +59,7 @@ exports.createOne = (Model, tourModel) =>
 
 // get all bookings done
 // localhost:3000/api/bookings/tours/5c88fa8f3e87471c159a0e96 GET
-exports.getAll = (Model) =>
+const getAll = (Model) =>
   catchAsync(async (req, res, next) => {
     const features = new APIFeatures(Model.find(), req.query)
       .filter()
@@ -78,7 +78,7 @@ exports.getAll = (Model) =>
 
 // get one booking done
 // localhost:3000/api/bookings/5c88fa8f3e87471c159a0e96 GET
-exports.getOne = (Model) =>
+const getOne = (Model) =>
   catchAsync(async (req, res, next) => {
     const doc = await Model.findById(req.params.id);
     if (!doc) {
@@ -91,3 +91,13 @@ exports.getOne = (Model) =>
       },
     });
   });
+
+const factory = {
+  deleteOne,
+  updateOne,
+  createOne,
+  getAll,
+  getOne,
+};
+
+export default factory;

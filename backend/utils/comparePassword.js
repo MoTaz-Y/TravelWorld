@@ -1,7 +1,7 @@
-const bcrypt = require('bcryptjs');
-const AppError = require('../utils/appError');
-const catchAsync = require('../middleware/catchAsync');
-const httpStatusText = require('../utils/httpStatusText');
+import bcrypt from 'bcryptjs';
+import AppError from '../utils/appError.js';
+import catchAsync from '../middleware/catchAsync.js';
+import httpStatusText from '../utils/httpStatusText.js';
 
 const comparePassword = catchAsync(async (password, hashedPassword) => {
   const isPasswordCorrect = await bcrypt.compare(password, hashedPassword);
@@ -12,4 +12,4 @@ const comparePassword = catchAsync(async (password, hashedPassword) => {
   }
 });
 
-module.exports = comparePassword;
+export default comparePassword;

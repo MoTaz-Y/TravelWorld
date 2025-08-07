@@ -1,43 +1,44 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const userController = require('../controllers/users/userController');
-const validationSchema = require('../middleware/validations/validationSchema');
-const verifyToken = require('../middleware/verifyToken');
-const allowedTo = require('../middleware/allowedTo');
-const userRoles = require('../utils/userRoles');
+import userController from '../controllers/users/userController.js';
+import validationSchema from '../middleware/validations/validationSchema.js';
+import verifyToken from '../middleware/verifyToken.js';
+import allowedTo from '../middleware/allowedTo.js';
+import userRoles from '../utils/userRoles.js';
+import { validate } from '../middleware/validations/validate.js';
 
 //public routes
 router.post(
   '/register',
-  validationSchema.UserValidation,
+  validate(validationSchema.UserValidation),
   userController.registerUser
 );
 router.post(
   '/login',
-  validationSchema.SigninValidation,
+  validate(validationSchema.SigninValidation),
   userController.loginUser
 );
 router.get('/logout', userController.logoutUser);
 
 router.post(
   '/forgot-password',
-  validationSchema.ForgotPasswordValidation,
+  validate(validationSchema.ForgotPasswordValidation),
   userController.forgotPassword
 );
 
 //protected user routes
 router.get(
   '/me',
-  verifyToken,
+  verifyToken.verifyToken,
   allowedTo(userRoles.USER),
   userController.getUserProfile
 );
 
 router.put(
   '/me',
-  verifyToken,
+  verifyToken.verifyToken,
   allowedTo(userRoles.USER),
-  validationSchema.UserUpdateValidation,
+  validate(validationSchema.UserUpdateValidation),
   userController.updateUserProfile
 );
 router.post(
@@ -48,8 +49,8 @@ router.post(
 
 router.post(
   '/me/password',
-  verifyToken,
-  validationSchema.UpdatePasswordValidation,
+  verifyToken.verifyToken,
+  validate(validationSchema.UpdatePasswordValidation),
   userController.updatePassword
 );
 
@@ -64,7 +65,7 @@ router.post(
   '/',
   verifyToken.verifyUser,
   allowedTo(userRoles.ADMIN),
-  validationSchema.UserValidation,
+  validate(validationSchema.UserValidation),
   userController.createUser
 );
 
@@ -78,7 +79,7 @@ router.patch(
   '/:id',
   verifyToken.verifyUser,
   allowedTo(userRoles.ADMIN),
-  validationSchema.UserUpdateValidation,
+  validate(validationSchema.UserUpdateValidation),
   userController.updateUser
 );
 router.delete(
@@ -88,4 +89,4 @@ router.delete(
   userController.deleteUser
 );
 
-module.exports = router;
+export default router;

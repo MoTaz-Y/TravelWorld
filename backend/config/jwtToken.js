@@ -1,5 +1,5 @@
-const jwt = require('jsonwebtoken');
-const dotenv = require('dotenv');
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
 // const config = require('config');
 // module.exports = function (req, res, next) {
 //   const token = req.header('x-auth-token');
@@ -14,9 +14,9 @@ const dotenv = require('dotenv');
 //     res.status(401).json({ msg: 'Token is not valid' });
 //   }
 // };
-
+dotenv.config();
 // generate token
-module.exports = function (id) {
+export const generateToken = function (id) {
   const token = jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRE,
   });

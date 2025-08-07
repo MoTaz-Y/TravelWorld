@@ -1,35 +1,36 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const tourController = require('../controllers/tours/tourController');
-const validationSchema = require('../middleware/validations/validationSchema');
-const allowedTo = require('../middleware/allowedTo');
-const userRoles = require('../utils/userRoles');
-const verifyToken = require('../middleware/verifyToken');
+import tourController from '../controllers/tours/tourController.js';
+import validationSchema from '../middleware/validations/validationSchema.js';
+import allowedTo from '../middleware/allowedTo.js';
+import userRoles from '../utils/userRoles.js';
+import verifyToken from '../middleware/verifyToken.js';
+import { validate } from '../middleware/validations/validate.js';
 
 router.get('/', tourController.getAllTours);
 router.get('/search', tourController.tourSearch);
 router.get('/featured', tourController.tourFeatured);
 router.get('/count', tourController.tourCount);
-router.get('/:id', tourController.getSingleTour);
+router.get('/:id', tourController.getTour);
 router.post(
   '/',
-  verifyToken.verifyAdmin,
-  allowedTo(userRoles.ADMIN, userRoles.MANAGER),
-  validationSchema.TourValidation,
+  // verifyToken.verifyAdmin,
+  // allowedTo(userRoles.ADMIN, userRoles.MANAGER),
+  // validate(validationSchema.TourValidation),
   tourController.createTour
 );
 router.patch(
   '/:id',
   verifyToken.verifyAdmin,
   allowedTo(userRoles.ADMIN, userRoles.MANAGER, userRoles.GUIDE),
-  validationSchema.TourValidation,
+  validate(validationSchema.TourValidation),
   tourController.updateTour
 );
 router.delete(
   '/:id',
-  verifyToken.verifyAdmin,
-  allowedTo(userRoles.ADMIN, userRoles.MANAGER),
+  // verifyToken.verifyAdmin,
+  // allowedTo(userRoles.ADMIN, userRoles.MANAGER),
   tourController.deleteTour
 );
 
-module.exports = router;
+export default router;

@@ -1,9 +1,9 @@
-const Booking = require('../../models/bookingModel');
-const Tour = require('../../models/tourModel');
-const factory = require('./handlerFactory');
+import Booking from '../../models/bookingModel.js';
+import Tour from '../../models/tourModel.js';
+import factory from './handlerFactory.js';
 
-exports.getBookings = factory.getAll(Booking);
-exports.getBooking = factory.getOne(Booking);
-exports.createBooking = factory.createOne(Booking, Tour);
-exports.updateBooking = factory.updateOne(Booking);
-exports.deleteBooking = factory.deleteOne(Booking);
+export const getBookings = factory.getAll(Booking);
+export const getBooking = factory.getOne(Booking);
+export const createBooking = factory.createOne(Booking, Tour);
+export const updateBooking = factory.updateOne(Booking);
+export const deleteBooking = factory.deleteOne(Booking);

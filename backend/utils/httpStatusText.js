@@ -16,7 +16,7 @@ const TOO_MANY_REQUESTS = 'Too Many Requests';
 const METHOD_NOT_ALLOWED = 'Method Not Allowed';
 const FAIL = 'Fail';
 
-module.exports = {
+export default {
   SUCCESS,
   ERROR,
   NOT_FOUND,

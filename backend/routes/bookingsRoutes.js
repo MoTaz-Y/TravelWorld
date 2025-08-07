@@ -1,17 +1,24 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const verifyToken = require('../middleware/verifyToken');
-const allowedTo = require('../middleware/allowedTo');
-const userRoles = require('../utils/userRoles');
+import verifyToken from '../middleware/verifyToken.js';
+import allowedTo from '../middleware/allowedTo.js';
+import userRoles from '../utils/userRoles.js';
 
-const {
+// const {
+//   getBookings,
+//   getBooking,
+//   createBooking,
+//   updateBooking,
+//   deleteBooking,
+// } = require('../controllers/bookings/bookingsController.js');
+
+import {
   getBookings,
   getBooking,
   createBooking,
   updateBooking,
   deleteBooking,
-} = require('../controllers/bookings/bookingsController');
-
+} from '../controllers/bookings/bookingsController.js';
 router
   .route('/tours/:tourId')
   .get(verifyToken.verifyAdmin, allowedTo(userRoles.ADMIN), getBookings)
@@ -34,4 +41,4 @@ router
     deleteBooking
   );
 
-module.exports = router;
+export default router;

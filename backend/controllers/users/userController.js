@@ -1,17 +1,6 @@
-const User = require('../../models/userModel');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const catchAsync = require('../../middleware/catchAsync');
-const { generateToken } = require('../../config/jwtToken');
-const validateMongoDbId = require('../../utils/validateMongodbId');
-const factory = require('./userHandlerFactory');
-const authFactory = require('./authHandlerFactory');
-// const { generateRefreshToken } = require('../config/refreshtoken');
-// const sendEmail = require('./emailController');
-// const crypto = require('crypto');
-// const cloudinaryUploadImg = require('../utils/cloudinary');
-// const fs = require('fs');
-// const { send } = require('process');
+import User from '../../models/userModel.js';
+import factory from './userHandlerFactory.js';
+import authFactory from './authHandlerFactory.js';
 
 const getAllUsers = factory.getAll(User);
 const getSingleUser = factory.getOne(User);
@@ -28,7 +17,7 @@ const updateUserProfile = authFactory.updateUserProfile(User);
 const refreshToken = authFactory.handleRefreshToken(User);
 const forgotPassword = authFactory.forgotPassword(User);
 
-module.exports = {
+export default {
   registerUser,
   loginUser,
   handleRefreshToken,

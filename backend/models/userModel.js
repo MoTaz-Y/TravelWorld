@@ -1,8 +1,6 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const validator = require('validator');
-import userRoles from '../utils/userRoles';
+import mongoose from 'mongoose';
+import validator from 'validator';
+import userRoles from '../utils/userRoles.js';
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -69,4 +67,4 @@ const userSchema = new mongoose.Schema({
 //   { timestamps: true }
 // );
 
-exports.User = mongoose.model('User', userSchema);
+export default mongoose.model('User', userSchema);

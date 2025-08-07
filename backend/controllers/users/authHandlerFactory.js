@@ -1,14 +1,14 @@
-const User = require('../../models/userModel');
-const catchAsync = require('../../utils/catchAsync');
-const AppError = require('../../utils/appError');
-const ApiFeatures = require('../../utils/apiFeatures');
-const httpStatusText = require('../../utils/httpStatusText');
-const jwt = require('jsonwebtoken');
-const crypto = require('crypto');
-const bcrypt = require('bcryptjs');
-const { generateToken } = require('../../config/jwtToken');
-const comparePassword = require('../../utils/comparePassword');
-const validateMongodbId = require('../../utils/validateMongodbId');
+import User from '../../models/userModel.js';
+import catchAsync from '../../middleware/catchAsync.js';
+import AppError from '../../utils/appError.js';
+import ApiFeatures from '../../utils/apiFeatures.js';
+import httpStatusText from '../../utils/httpStatusText.js';
+import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
+import bcrypt from 'bcryptjs';
+import { generateToken } from '../../config/jwtToken.js';
+import comparePassword from '../../utils/comparePassword.js';
+import validateMongodbId from '../../utils/validateMongodbId.js';
 
 // Register User Done
 // localhost:3000/api/auth/register Post
@@ -273,7 +273,7 @@ const forgotPassword = (User) =>
     });
   });
 
-module.exports = {
+export default {
   registerUser,
   loginUser,
   logoutUser,

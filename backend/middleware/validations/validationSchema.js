@@ -1,6 +1,6 @@
 import * as z from 'zod';
 
-export const UserValidation = z.object({
+const UserValidation = z.object({
   name: z
     .string()
     .min(2, {
@@ -27,9 +27,9 @@ export const UserValidation = z.object({
       message: 'Too long',
     }),
 });
-export const UserUpdateValidation = UserValidation.partial();
+const UserUpdateValidation = UserValidation.partial();
 
-export const UpdatePasswordValidation = z.object({
+const UpdatePasswordValidation = z.object({
   oldPassword: z
     .string()
     .min(8, {
@@ -56,10 +56,10 @@ export const UpdatePasswordValidation = z.object({
     }),
 });
 
-export const ForgotPasswordValidation = z.object({
+const ForgotPasswordValidation = z.object({
   email: z.string().email(),
 });
-export const SigninValidation = z.object({
+const SigninValidation = z.object({
   email: z.string().email(),
   password: z
     .string()
@@ -71,7 +71,7 @@ export const SigninValidation = z.object({
     }),
 });
 
-export const TourValidation = z.object({
+const TourValidation = z.object({
   title: z
     .string()
     .min(2, {
@@ -112,3 +112,13 @@ export const TourValidation = z.object({
     message: 'Ratings quantity must be at least 1',
   }),
 });
+const validationSchema = {
+  UserValidation,
+  UserUpdateValidation,
+  UpdatePasswordValidation,
+  ForgotPasswordValidation,
+  SigninValidation,
+  TourValidation,
+};
+
+export default validationSchema;
