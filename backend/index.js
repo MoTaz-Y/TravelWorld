@@ -5,9 +5,9 @@ import mongoose from 'mongoose';
 import cookieParser from 'cookie-parser';
 // import bodyParser from 'body-parser'; //
 // import morgan from 'morgan'; //
-// import path from 'path'; //
-// import { fileURLToPath } from 'url'; //
-// import { dirname } from 'path'; //
+import path from 'path'; //
+import { fileURLToPath } from 'url'; //
+import { dirname } from 'path'; //
 import { connectDB } from './config/db.js'; //
 import { errorHandler } from './middleware/errorMiddleware.js'; //
 import notFound from './middleware/notFoundMiddleware.js'; //
@@ -18,8 +18,8 @@ import reviewRoutes from './routes/reviewsRoutes.js';
 import bookingRoutes from './routes/bookingsRoutes.js';
 // import paymentRoutes from './routes/paymentRoutes.js';//
 
-// const __filename = fileURLToPath(import.meta.url); //
-// const __dirname = dirname(__filename); //
+const __filename = fileURLToPath(import.meta.url); //
+const __dirname = dirname(__filename); //
 
 config();
 
@@ -44,7 +44,7 @@ app.use('/api/reviews', reviewRoutes);
 app.use('/api/bookings', bookingRoutes); //
 // app.use('/api/payments', paymentRoutes);//
 
-// app.use(express.static(path.join(__dirname, '../frontend/build'))); //
+app.use(express.static(path.join(__dirname, 'public/images/'))); //
 // app.get('*', (req, res) => {
 //   //
 //   res.sendFile(path.join(__dirname, '../frontend/build/index.html')); //

@@ -52,18 +52,19 @@ const getOne = (Model) =>
     });
   });
 // get tour by search
-// localhost:3000/api/tours/search?city=paris&distance=100&maxGroupSize=5 GET
+// localhost:3000/api/tours/search?city=paris&distance=100 GET
 const getSearch = (Model) =>
   catchAsync(async (req, res, next) => {
-    const city = new RegExp(req.params.city, 'i');
-    const distance = parseInt(req.params.distance);
-    const maxGroupSize = parseInt(req.params.maxGroupSize);
+    const city = new RegExp(req.query.city, 'i');
+    console.log(city);
+    // const distance = parseInt(req.params.distance);
+    // const roupSize = parseInt(req.params.maxGroupSize);
     const doc = await Model.find({
-      $and: [
-        { startLocation: { $regex: city } },
-        { distance: { $gte: distance } },
-        { maxGroupSize: { $gte: maxGroupSize } },
-      ],
+      // $and: [
+      city: { $regex: city },
+      // { distance: { $gte: distance } },
+      // { maxGroupSize: { $gte: maxGroupSize } },
+      // ],
     }).populate('reviews');
     if (!doc) {
       return next(
