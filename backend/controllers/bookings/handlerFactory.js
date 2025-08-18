@@ -44,11 +44,10 @@ const createOne = (Model, tourModel) =>
     if (!tour) {
       return next(new AppError('No tour found with that ID', 400));
     }
-
-    const doc = await Model.create(req.body);
+    const bookingObj = { ...req.body, tourId: tourId };
+    const doc = await Model.create(bookingObj);
     await tour.bookings.push(doc);
     await tour.save();
-
     res.status(201).json({
       status: 'success',
       data: {

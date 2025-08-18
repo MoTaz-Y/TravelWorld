@@ -1,33 +1,67 @@
 import './booking.css';
 import { Form, FormGroup, ListGroup, ListGroupItem, Button } from 'reactstrap';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../../context/AuthContext';
+import { BASE_URL } from '../../utils/config';
 function Booking({ tour, avgRating }) {
-  const { price, reviews } = tour;
-  const [credentials, setCredentials] = useState({
-    userId: '01', //this will be dynamic
-    userEmail: '',
+  const { price, reviews, title } = tour;
+  const { user } = useContext(AuthContext);
+  const tourId = tour._id;
+  const navigate = useNavigate();
+  const [totalFee, setTotalFee] = useState(0);
+  const [booking, setBooking] = useState({
+    userId: user?._id, //this will be dynamic
+    userEmail: user?.email,
+    tourName: title,
     fullName: '',
     phone: '',
     bookAt: '',
     guestSize: '',
+    totalFee: totalFee,
   });
-  const navigate = useNavigate();
+  // const [editBooking, setEditBooking] = useState(null);
   const handleChange = (e) => {
-    setCredentials((prev) => ({
+    setBooking((prev) => ({
       ...prev,
       [e.target.id]: e.target.value,
     }));
   };
 
   // send data to server
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    navigate('/thank-you');
+    if (!user || !user.token || user === null || user === undefined) {
+      return alert('Please login to book a tour');
+    }
+    console.log('booking=-=-=-=-=-=-=', booking);
+    try {
+      let url = `${BASE_URL}/bookings/tours/${tourId}`;
+      let method = 'POST';
+      // if (editBooking) {
+      //   url = `${BASE_URL}/bookings/${editBooking._id}`;
+      //   method = 'PATCH';
+      // }
+      const res = await fetch(url, {
+        method: method,
+        headers: {
+          'content-type': 'application/json',
+          // Authorization: `Bearer ${user.token}`,
+        },
+        credentials: 'include',
+        body: JSON.stringify(booking),
+      });
+      const data = await res.json();
+      console.log('data', data);
+      if (!res.ok) return alert(data.message);
+      navigate('/thank-you');
+    } catch (err) {
+      return alert(err.message);
+    }
   };
   const serviceFee = 10;
   const totalAmount =
-    Number(price) * Number(credentials.guestSize) + Number(serviceFee);
+    Number(price) * Number(booking.guestSize) + Number(serviceFee);
   return (
     <div className='booking'>
       <div className='booking__top d-flex align-items-center justify-content-between '>
@@ -99,7 +133,9 @@ function Booking({ tour, avgRating }) {
           </ListGroupItem> */}
           <ListGroupItem className='border-0 px-0 total'>
             <h5>Total</h5>
-            <span>${totalAmount === serviceFee ? 0 : totalAmount}</span>
+            <span>
+              ${setTotalFee(totalAmount === serviceFee ? 0 : totalAmount)}
+            </span>
           </ListGroupItem>
         </ListGroup>
         <Button

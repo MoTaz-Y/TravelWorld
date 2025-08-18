@@ -21,23 +21,23 @@ import {
 } from '../controllers/bookings/bookingsController.js';
 router
   .route('/tours/:tourId')
-  .get(verifyToken.verifyAdmin, allowedTo(userRoles.ADMIN), getBookings)
-  .post(verifyToken.verifyUser, allowedTo(userRoles.USER), createBooking);
+  .get(/*verifyToken.verifyAdmin, allowedTo(userRoles.ADMIN),*/ getBookings)
+  .post(/*verifyToken.verifyUser, allowedTo(userRoles.USER),*/ createBooking);
 router
   .route('/:id')
   .get(
-    verifyToken.verifyUser,
-    allowedTo(userRoles.USER, userRoles.ADMIN),
+    /*verifyToken.verifyUser,
+    allowedTo(userRoles.USER, userRoles.ADMIN),*/
     getBooking
   )
   .put(
-    verifyToken.verifyUser,
-    allowedTo(userRoles.USER, userRoles.ADMIN),
+    /*verifyToken.verifyUser,
+    allowedTo(userRoles.USER, userRoles.ADMIN),*/
     updateBooking
   )
   .delete(
-    verifyToken.verifyUser,
-    allowedTo(userRoles.USER, userRoles.ADMIN),
+    /*verifyToken.verifyUser,
+    allowedTo(userRoles.USER, userRoles.ADMIN),*/
     deleteBooking
   );
 
