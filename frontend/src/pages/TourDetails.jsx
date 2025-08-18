@@ -11,6 +11,7 @@ import { BASE_URL } from '../utils/config';
 import Loading from '../components/Loading/Loading';
 import Error from '../components/Error/Error';
 import { AuthContext } from '../context/AuthContext';
+import moment from 'moment';
 const TourDetails = () => {
   const [tourRating, setTourRating] = useState(0);
   const [reviewsList, setReviewsList] = useState([]);
@@ -26,7 +27,7 @@ const TourDetails = () => {
   const photo = data?.photo || '';
   console.log('data reviews', reviews);
   const { avgRating, totalRating } = calculateAvgRating(reviews);
-  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  // const options = { year: 'numeric', month: 'long', day: 'numeric' };
 
   useEffect(() => {
     if (reviews) {
@@ -177,7 +178,7 @@ const TourDetails = () => {
                               <i
                                 className='ri-star-s-fill'
                                 style={{
-                                  color: star <= tourRating ? 'gold' : '#ccc', // ⭐ لو النجمة ≤ rating تلونها ذهبي
+                                  color: star <= tourRating ? 'gold' : '#ccc',
                                   fontSize: '1.5rem',
                                 }}
                               ></i>
@@ -223,12 +224,7 @@ const TourDetails = () => {
                               <div className='d-flex align-items-center justify-content-between'>
                                 <div>
                                   <h6>{review.userName}</h6>
-                                  <p>
-                                    {new Date('2023-07-07').toDateString(
-                                      'en-US',
-                                      options
-                                    )}
-                                  </p>
+                                  <p>{moment(review.createdAt).fromNow()}</p>
                                 </div>
                                 <span className='d-flex align-items-center gap-1'>
                                   <i
@@ -246,7 +242,7 @@ const TourDetails = () => {
                                       className='ri-edit-2-line'
                                       style={{
                                         fontSize: '1.2rem',
-                                        color: '#f0ad4e', // لون أصفر/برتقالي للتعديل
+                                        color: '#f0ad4e',
                                         cursor: 'pointer',
                                         marginRight: '10px',
                                       }}
@@ -256,7 +252,7 @@ const TourDetails = () => {
                                       className='ri-delete-bin-6-line'
                                       style={{
                                         fontSize: '1.2rem',
-                                        color: '#d9534f', // لون أحمر للحذف
+                                        color: '#d9534f',
                                         cursor: 'pointer',
                                       }}
                                       onClick={() =>
