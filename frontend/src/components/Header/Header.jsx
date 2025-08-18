@@ -1,7 +1,10 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useContext } from 'react';
 import { Container, Row, Button } from 'reactstrap';
 import { Link, NavLink } from 'react-router-dom';
 import logo from '../../assets/images/logo.png';
+import { AuthContext } from '../../context/AuthContext';
+// import { BASE_URL } from '../../utils/config';
+import { useNavigate } from 'react-router-dom';
 import './header.css';
 const nav__links = [
   {
@@ -20,7 +23,18 @@ const nav__links = [
 
 const Header = () => {
   const headerRef = useRef(null);
+  const navigate = useNavigate();
+  const { user, dispatch } = useContext(AuthContext);
 
+  const handleLogout = () => {
+    // are you sure you want to logout popup
+    if (window.confirm('Are you sure you want to logout?')) {
+      dispatch({ type: 'LOGOUT' });
+      navigate('/');
+    } else {
+      return;
+    }
+  };
   useEffect(() => {
     const stickyHeaderFunc = () => {
       if (
@@ -67,12 +81,23 @@ const Header = () => {
             {/* menu ends */}
             <div className='nav__right d-flex align-items-center gap-4'>
               <div className='nav__btns d-flex align-items-center gap-4'>
-                <Button className='btn secondary__btn'>
-                  <Link to='/login'>Login</Link>
-                </Button>
-                <Button className='btn primary__btn'>
-                  <Link to='/register'>register</Link>
-                </Button>
+                {user ? (
+                  <>
+                    <h5 className='mb-0'>{user.userName}</h5>
+                    <Button className='btn btn-dark' onClick={handleLogout}>
+                      Logout
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button className='btn secondary__btn'>
+                      <Link to='/login'>Login</Link>
+                    </Button>
+                    <Button className='btn primary__btn'>
+                      <Link to='/register'>register</Link>
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
           </div>

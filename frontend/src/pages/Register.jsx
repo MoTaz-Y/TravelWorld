@@ -3,25 +3,45 @@ import { Link, useNavigate } from 'react-router-dom';
 import '../styles/login.css';
 import registerImg from '../assets/images/register.png';
 import userIcon from '../assets/images/user.png';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
+import { AuthContext } from '../context/AuthContext.jsx';
+import { BASE_URL } from '../utils/config';
 
 const Register = () => {
   const [credentials, setCredentials] = useState({
-    Email: undefined,
-    Password: undefined,
+    email: undefined,
+    password: undefined,
     userName: undefined,
   });
+  const { dispatch } = useContext(AuthContext);
   const navigate = useNavigate();
   const handleChange = (e) => {
     setCredentials((prev) => ({
       ...prev,
       [e.target.id]: e.target.value,
     }));
-    console.log(credentials);
   };
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    navigate('/home');
+    try {
+      const res = await fetch(`${BASE_URL}/users/register`, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify(credentials),
+      });
+      const data = await res.json();
+      console.log('response', data);
+
+      if (!res.ok) alert(data.message);
+      dispatch({ type: 'REGISTER_SUCCESS', payload: data.data });
+      navigate('/login');
+    } catch (err) {
+      console.log(err);
+      dispatch({ type: 'LOGIN_FAILURE', payload: err.response.data.message });
+      alert(err.response.data.message);
+    }
   };
   return (
     <section>

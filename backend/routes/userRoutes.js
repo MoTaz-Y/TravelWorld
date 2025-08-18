@@ -10,7 +10,7 @@ import { validate } from '../middleware/validations/validate.js';
 //public routes
 router.post(
   '/register',
-  validate(validationSchema.UserValidation),
+  // validate(validationSchema.UserValidation),
   userController.registerUser
 );
 router.post(

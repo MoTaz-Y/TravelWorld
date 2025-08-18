@@ -1,15 +1,15 @@
 import * as z from 'zod';
 
 const UserValidation = z.object({
-  name: z
-    .string()
-    .min(2, {
-      message: 'Too short',
-    })
-    .max(50, {
-      message: 'Too long',
-    }),
-  username: z
+  // name: z
+  //   .string()
+  //   .min(2, {
+  //     message: 'Too short',
+  //   })
+  //   .max(50, {
+  //     message: 'Too long',
+  //   }),
+  userName: z
     .string()
     .min(2, {
       message: 'Too short',
@@ -61,14 +61,14 @@ const ForgotPasswordValidation = z.object({
 });
 const SigninValidation = z.object({
   email: z.string().email(),
-  password: z
-    .string()
-    .min(8, {
-      message: 'Password must be at least 8 characters',
-    })
-    .max(50, {
-      message: 'Too long',
-    }),
+  // password: z
+  //   .string()
+  //   .min(8, {
+  //     message: 'Password must be at least 8 characters',
+  //   })
+  //   .max(50, {
+  //     message: 'Too long',
+  //   }),
 });
 
 const TourValidation = z.object({

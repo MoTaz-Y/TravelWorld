@@ -51,12 +51,17 @@ const createOne = (Model, Tour) =>
     }
     const newReview = await new Model({
       ...req.body,
+      tourId: tourId,
     });
     if (!newReview) {
       return next(new AppError('Failed to create review', 500));
     }
-    const savedReview = await newReview.save();
+    const savedReview = await newReview.save().catch((err) => {
+      console.error('Save error:', err);
+      throw err;
+    });
     const tour = await Tour.findById(tourId);
+    console.log('tour', tour);
     if (!tour) {
       return next(new AppError('Failed to find tour', 500));
     }

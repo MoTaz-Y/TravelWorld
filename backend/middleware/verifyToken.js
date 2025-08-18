@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 dotenv.config();
-import appError from '../utils/appError.js';
+import AppError from '../utils/appError.js';
 import httpStatusText from '../utils/httpStatusText.js';
 
 const verifyToken = (req, res, next) => {
@@ -9,7 +9,7 @@ const verifyToken = (req, res, next) => {
     req.cookies.accessToken || req.header('Authorization') || req.body.token;
   if (!token) {
     return next(
-      appError.create('you are not authenticated', 401, httpStatusText.ERROR)
+      new AppError('token is required', 401, httpStatusText.BAD_REQUEST)
     );
   }
   // const token = authHeader.split(' ')[1];
@@ -26,7 +26,7 @@ const verifyToken = (req, res, next) => {
       (err, decoded) => {
         if (err) {
           return next(
-            appError.create('token is invalid', 401, httpStatusText.ERROR)
+            new AppError('invalid token', 401, httpStatusText.BAD_REQUEST)
           );
         }
         return decoded;
@@ -35,7 +35,7 @@ const verifyToken = (req, res, next) => {
     req.user = decoded;
     next();
   } catch (err) {
-    return next(appError.create('token is invalid', 401, httpStatusText.ERROR));
+    return next(new AppError('invalid token', 401, httpStatusText.BAD_REQUEST));
   }
 };
 
@@ -46,7 +46,7 @@ const verifyUser = (req, res, next) => {
       next();
     } else {
       return next(
-        appError.create('you are not authorized', 403, httpStatusText.ERROR)
+        new AppError('you are not authorized', 403, httpStatusText.ERROR)
       );
     }
   });
@@ -59,7 +59,7 @@ const verifyAdmin = (req, res, next) => {
       next();
     } else {
       return next(
-        appError.create('you are not authorized', 403, httpStatusText.ERROR)
+        new AppError('you are not authorized', 403, httpStatusText.ERROR)
       );
     }
   });

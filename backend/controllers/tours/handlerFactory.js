@@ -38,7 +38,9 @@ const getAll = (Model) =>
 //localhost:3000/api/tours/5c88fa8f3e87471c159a0e96 GET
 const getOne = (Model) =>
   catchAsync(async (req, res, next) => {
+    console.log('req.params.id', req.params.id);
     const doc = await Model.findById(req.params.id).populate('reviews');
+    console.log('doc', doc);
     if (!doc) {
       return next(
         new AppError.create('No documents found', 401, httpStatusText.NOT_FOUND)

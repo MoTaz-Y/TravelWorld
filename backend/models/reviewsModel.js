@@ -8,18 +8,18 @@ const reviewSchema = new Schema({
     max: 5,
     required: [true, 'Review must have a rating'],
   },
-  text: {
+  review: {
     type: String,
     required: [true, 'Review must have a text'],
   },
-  tour: {
+  tourId: {
     type: mongoose.Schema.ObjectId,
     ref: 'Tour',
     required: [true, 'Review must belong to a tour'],
   },
-  user: {
-    type: mongoose.Schema.ObjectId,
-    ref: 'User',
+  userName: {
+    type: String,
+    // ref: 'User',
     required: [true, 'Review must belong to a user'],
   },
   createdAt: {

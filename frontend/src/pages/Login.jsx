@@ -3,24 +3,44 @@ import { Link, useNavigate } from 'react-router-dom';
 import '../styles/login.css';
 import loginImg from '../assets/images/login.png';
 import userIcon from '../assets/images/user.png';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
+import { AuthContext } from '../context/AuthContext';
+import { BASE_URL } from '../utils/config';
 
 const Login = () => {
   const [credentials, setCredentials] = useState({
-    Email: undefined,
-    Password: undefined,
+    email: undefined,
+    password: undefined,
   });
+  const { dispatch } = useContext(AuthContext);
   const navigate = useNavigate();
   const handleChange = (e) => {
     setCredentials((prev) => ({
       ...prev,
       [e.target.id]: e.target.value,
     }));
-    console.log(credentials);
   };
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    navigate('/home');
+    dispatch({ type: 'LOGIN_START' });
+    try {
+      const res = await fetch(`${BASE_URL}/users/login`, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(credentials),
+      });
+      const data = await res.json();
+      console.log(data);
+      if (!res.ok) alert(data.message);
+      dispatch({ type: 'LOGIN_SUCCESS', payload: data.data });
+      navigate('/home');
+    } catch (err) {
+      dispatch({ type: 'LOGIN_FAILURE', payload: err.response.data.message });
+      alert(err.response.data.message);
+    }
   };
   return (
     <section>
@@ -57,11 +77,7 @@ const Login = () => {
                       onChange={handleChange}
                     />
                   </FormGroup>
-                  <Button
-                    color='btn secondary__btn auth__btn'
-                    type='submit'
-                    onClick={handleSubmit}
-                  >
+                  <Button color='btn secondary__btn auth__btn' type='submit'>
                     Login
                   </Button>
                 </Form>

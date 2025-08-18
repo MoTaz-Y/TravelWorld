@@ -14,8 +14,10 @@ import validateMongodbId from '../../utils/validateMongodbId.js';
 // localhost:3000/api/auth/register Post
 const registerUser = (User) =>
   catchAsync(async (req, res, next) => {
-    const { name, email, password, passwordConfirm, phone, photo } = req.body;
-    if (!name || !email || !password || !passwordConfirm || !phone || !photo) {
+    const { userName, email, password } = req.body;
+    console.log('req.body=====================');
+    console.log('req.body', req.body);
+    if (!userName || !email || !password) {
       return next(
         new AppError(
           'Please provide all required fields',
@@ -25,6 +27,7 @@ const registerUser = (User) =>
       );
     }
     const userExists = await User.findOne({ email });
+    console.log('userExists', userExists);
     if (userExists) {
       return next(
         new AppError('User already exists', 400, httpStatusText.BAD_REQUEST)
@@ -33,12 +36,12 @@ const registerUser = (User) =>
     const salt = await bcrypt.genSalt(12);
     const hashPassword = await bcrypt.hash(password, salt);
     const newUser = await User.create({
-      name,
+      userName,
       email,
       password: hashPassword,
-      passwordConfirm: hashPassword,
-      phone,
-      role,
+      // passwordConfirm: hashPassword,
+      // phone,
+      // role,
     });
     if (!newUser) {
       return next(
@@ -50,10 +53,10 @@ const registerUser = (User) =>
       message: 'User created successfully',
       data: {
         _id: newUser._id,
-        name: newUser.name,
+        name: newUser.userName,
         email: newUser.email,
-        phone: newUser.phone,
-        photo: newUser.photo,
+        // phone: newUser.phone,
+        // photo: newUser.photo,
         token: generateToken(newUser._id),
       },
     });
@@ -79,19 +82,18 @@ const loginUser = (User) =>
         new AppError('User not found', 400, httpStatusText.BAD_REQUEST)
       );
     }
-    const isPasswordCorrect = await comparePassword(password, user.password);
+    const isPasswordCorrect = await bcrypt.compare(password, user.password);
     if (!isPasswordCorrect) {
       return next(
         new AppError('Incorrect password', 400, httpStatusText.BAD_REQUEST)
       );
     }
     const token = generateToken(user._id);
-
     res
       .cookie('accessToken', token, {
         httpOnly: true,
-        secure: true,
-        expires: process.env.JWT_COOKIE_EXPIRE,
+        secure: false, // set to true in production
+        expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       })
       .status(200)
       .json({
@@ -99,9 +101,9 @@ const loginUser = (User) =>
         message: 'User logged in successfully',
         data: {
           _id: user._id,
-          name: user.name,
+          userName: user.userName,
           email: user.email,
-          phone: user.phone,
+          phone: user.phone || null,
           role: user.role,
           token: token,
         },

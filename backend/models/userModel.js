@@ -3,7 +3,7 @@ import validator from 'validator';
 import userRoles from '../utils/userRoles.js';
 
 const userSchema = new mongoose.Schema({
-  name: {
+  userName: {
     type: String,
     required: true,
   },
@@ -15,11 +15,11 @@ const userSchema = new mongoose.Schema({
   },
   phone: {
     type: Number,
-    required: true,
+    default: null,
   },
   work: {
     type: String,
-    required: true,
+    default: 'Not Provided',
   },
   password: {
     type: String,
