@@ -24,6 +24,7 @@ const updateOne = (Model) =>
       new: true,
       runValidators: true,
     });
+    console.log('doc', doc);
     if (!doc) {
       return next(new AppError('No documents found with that ID', 400));
     }
@@ -37,17 +38,32 @@ const updateOne = (Model) =>
 
 // create one booking done
 // localhost:3000/api/bookings/tours/5c88fa8f3e87471c159a0e96 POST
-const createOne = (Model, tourModel) =>
+const createOne = (Model, tourModel, UserModel) =>
   catchAsync(async (req, res, next) => {
     const tourId = req.params.tourId;
     const tour = await tourModel.findById(tourId);
+
+    console.log('tour', tour);
+    console.log('req.body', req.body);
     if (!tour) {
       return next(new AppError('No tour found with that ID', 400));
     }
     const bookingObj = { ...req.body, tourId: tourId };
     const doc = await Model.create(bookingObj);
+    // console.log('doc', doc);
     await tour.bookings.push(doc);
     await tour.save();
+    // console.log('tour02', tour);
+    // console.log('user id', req.body.userId);
+    const user = await UserModel.findByIdAndUpdate(
+      req.body.userId,
+      { $push: { bookings: doc._id } },
+      { new: true, upsert: true }
+    );
+    if (!user) {
+      return next(new AppError('No user found with that ID', 400));
+    }
+    // console.log('user', user);
     res.status(201).json({
       status: 'success',
       data: {
@@ -80,6 +96,7 @@ const getAll = (Model) =>
 const getOne = (Model) =>
   catchAsync(async (req, res, next) => {
     const doc = await Model.findById(req.params.id);
+    console.log('doc', doc);
     if (!doc) {
       return next(new AppError('No documents found with that ID', 400));
     }

@@ -25,7 +25,6 @@ const TourDetails = () => {
   const { title, desc, address, reviews, city, distance, maxGroupSize } = data;
   const price = data?.price || 0;
   const photo = data?.photo || '';
-  console.log('data reviews', reviews);
   const { avgRating, totalRating } = calculateAvgRating(reviews);
   // const options = { year: 'numeric', month: 'long', day: 'numeric' };
 

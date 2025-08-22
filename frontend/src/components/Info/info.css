@@ -1,0 +1,21 @@
+.info__container {
+  margin: 2rem auto;
+  max-width: 800px;
+  background: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.info__title {
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: var(--heading-color);
+}
+
+.info__text {
+  font-size: 1rem;
+  color: var(--text-color);
+  line-height: 1.5rem;
+}

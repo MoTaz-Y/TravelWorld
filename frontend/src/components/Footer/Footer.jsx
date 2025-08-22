@@ -2,6 +2,8 @@ import './footer.css';
 import { Container, Row, Col, ListGroup, ListGroupItem } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import logo from '../../assets/images/logo.png';
+import { useContext } from 'react';
+import { AuthContext } from '../../context/AuthContext';
 
 const quick__links = [
   {
@@ -17,22 +19,19 @@ const quick__links = [
     display: 'Tours',
   },
 ];
-const quick__links2 = [
-  {
-    path: '/gallery',
-    display: 'Gallery',
-  },
-  {
-    path: '/login',
-    display: 'Login',
-  },
-  {
-    path: '/register',
-    display: 'Register',
-  },
-];
 const Footer = () => {
   const year = new Date().getFullYear();
+  const { user } = useContext(AuthContext);
+  const linksToShow = [
+    { path: '/gallery', display: 'Gallery' },
+    ...(user
+      ? [{ path: '/profile', display: 'Profile' }]
+      : [
+          { path: '/login', display: 'Login' },
+          { path: '/register', display: 'Register' },
+        ]),
+  ];
+
   return (
     <footer className='footer'>
       <Container>
@@ -83,7 +82,7 @@ const Footer = () => {
           <Col lg='3' md='6' sm='12'>
             <h5 className='footer__link-title'>Quick Links</h5>
             <ListGroup className='footer__quick-links' flush>
-              {quick__links2.map((item, index) => (
+              {linksToShow.map((item, index) => (
                 <ListGroupItem key={index}>
                   <Link to={item.path}>{item.display}</Link>
                 </ListGroupItem>

@@ -23,6 +23,7 @@ const nav__links = [
 
 const Header = () => {
   const headerRef = useRef(null);
+  const menuRef = useRef(null);
   const navigate = useNavigate();
   const { user, dispatch } = useContext(AuthContext);
 
@@ -51,6 +52,7 @@ const Header = () => {
       window.removeEventListener('scroll', stickyHeaderFunc);
     };
   }, []);
+  const toggleMenu = () => menuRef.current.classList.toggle('show__menu');
   return (
     <header className='header' ref={headerRef}>
       <Container>
@@ -62,8 +64,16 @@ const Header = () => {
             </div>
             {/* logo end */}
             {/* menu starts */}
-            <div className='navigation'>
-              <div className='menu d-flex align-items-center gap-3'>
+            <div
+              className='navigation'
+              ref={menuRef}
+              onClick={(e) => {
+                if (e.target.classList.contains('navigation')) {
+                  toggleMenu();
+                }
+              }}
+            >
+              <div className='menu d-flex align-items-center gap-5'>
                 {nav__links.map((item, index) => (
                   <li className='nav__item' key={index}>
                     <NavLink
@@ -83,7 +93,13 @@ const Header = () => {
               <div className='nav__btns d-flex align-items-center gap-4'>
                 {user ? (
                   <>
-                    <h5 className='mb-0'>{user.userName}</h5>
+                    <Link
+                      to='/profile'
+                      className='d-flex align-items-center gap-2 text-decoration-none text-black fw-bold'
+                    >
+                      <i className='ri-user-line'></i>
+                      <h6>{user.userName}</h6>
+                    </Link>
                     <Button className='btn btn-dark' onClick={handleLogout}>
                       Logout
                     </Button>
@@ -99,6 +115,9 @@ const Header = () => {
                   </>
                 )}
               </div>
+              <span className='mobile__menu cursor'>
+                <i class='ri-menu-line' onClick={toggleMenu}></i>
+              </span>
             </div>
           </div>
         </Row>

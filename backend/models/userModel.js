@@ -29,6 +29,13 @@ const userSchema = new mongoose.Schema({
   refreshToken: {
     type: String,
   },
+  bookings: [
+    {
+      type: mongoose.Types.ObjectId,
+      ref: 'Booking',
+      default: [],
+    },
+  ],
   role: {
     type: String,
     enum: [userRoles.ADMIN, userRoles.USER, userRoles.MANAGER, userRoles.GUIDE],

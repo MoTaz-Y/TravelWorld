@@ -15,77 +15,77 @@ router.post(
 );
 router.post(
   '/login',
-  validate(validationSchema.SigninValidation),
+  // validate(validationSchema.SigninValidation),
   userController.loginUser
 );
 router.get('/logout', userController.logoutUser);
 
 router.post(
   '/forgot-password',
-  validate(validationSchema.ForgotPasswordValidation),
+  // validate(validationSchema.ForgotPasswordValidation),
   userController.forgotPassword
 );
 
 //protected user routes
 router.get(
   '/me',
-  verifyToken.verifyToken,
-  allowedTo(userRoles.USER),
+  // verifyToken.verifyToken,
+  // allowedTo(userRoles.USER),
   userController.getUserProfile
 );
 
 router.put(
   '/me',
-  verifyToken.verifyToken,
-  allowedTo(userRoles.USER),
-  validate(validationSchema.UserUpdateValidation),
+  // verifyToken.verifyToken,
+  // allowedTo(userRoles.USER),
+  // validate(validationSchema.UserUpdateValidation),
   userController.updateUserProfile
 );
 router.post(
   '/refresh-token',
-  allowedTo(userRoles.ADMIN, userRoles.USER),
+  // allowedTo(userRoles.ADMIN, userRoles.USER),
   userController.refreshToken
 );
 
 router.post(
   '/me/password',
-  verifyToken.verifyToken,
-  validate(validationSchema.UpdatePasswordValidation),
+  // verifyToken.verifyToken,
+  // validate(validationSchema.UpdatePasswordValidation),
   userController.updatePassword
 );
 
 //protected admin routes
 router.get(
   '/',
-  verifyToken.verifyUser,
-  allowedTo(userRoles.ADMIN),
+  // verifyToken.verifyUser,
+  // allowedTo(userRoles.ADMIN),
   userController.getAllUsers
 );
 router.post(
   '/',
-  verifyToken.verifyUser,
-  allowedTo(userRoles.ADMIN),
-  validate(validationSchema.UserValidation),
+  // verifyToken.verifyUser,
+  // allowedTo(userRoles.ADMIN),
+  // validate(validationSchema.UserValidation),
   userController.createUser
 );
 
 router.get(
   '/:id',
-  verifyToken.verifyUser,
-  allowedTo(userRoles.ADMIN),
+  // verifyToken.verifyUser,
+  // allowedTo(userRoles.ADMIN),
   userController.getSingleUser
 );
-router.patch(
+router.put(
   '/:id',
-  verifyToken.verifyUser,
-  allowedTo(userRoles.ADMIN),
-  validate(validationSchema.UserUpdateValidation),
+  // verifyToken.verifyUser,
+  // allowedTo(userRoles.ADMIN),
+  // validate(validationSchema.UserUpdateValidation),
   userController.updateUser
 );
 router.delete(
   '/:id',
-  verifyToken.verifyUser,
-  allowedTo(userRoles.ADMIN),
+  // verifyToken.verifyUser,
+  // allowedTo(userRoles.ADMIN),
   userController.deleteUser
 );
 

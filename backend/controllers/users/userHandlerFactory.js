@@ -32,7 +32,8 @@ const getAll = (User) =>
 //localhost:3000/api/users/5c88fa8f3e87471c159a0e96 GET
 const getOne = (User) =>
   catchAsync(async (req, res, next) => {
-    const user = await User.findById(req.params.id);
+    const user = await User.findById(req.params.id).populate('bookings');
+    console.log('user', user);
     if (!user) {
       return next(new AppError('No user found', 404, httpStatusText.NOT_FOUND));
     }

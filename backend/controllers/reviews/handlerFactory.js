@@ -61,7 +61,6 @@ const createOne = (Model, Tour) =>
       throw err;
     });
     const tour = await Tour.findById(tourId);
-    console.log('tour', tour);
     if (!tour) {
       return next(new AppError('Failed to find tour', 500));
     }

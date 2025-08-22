@@ -1,0 +1,7 @@
+.tab {
+  cursor: pointer;
+}
+.active__tab {
+  background-color: var(--secondary-color) !important;
+  color: #fff !important;
+}

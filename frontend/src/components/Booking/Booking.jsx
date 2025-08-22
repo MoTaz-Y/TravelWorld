@@ -1,6 +1,6 @@
 import './booking.css';
 import { Form, FormGroup, ListGroup, ListGroupItem, Button } from 'reactstrap';
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import { BASE_URL } from '../../utils/config';
@@ -34,7 +34,6 @@ function Booking({ tour, avgRating }) {
     if (!user || !user.token || user === null || user === undefined) {
       return alert('Please login to book a tour');
     }
-    console.log('booking=-=-=-=-=-=-=', booking);
     try {
       let url = `${BASE_URL}/bookings/tours/${tourId}`;
       let method = 'POST';
@@ -60,8 +59,11 @@ function Booking({ tour, avgRating }) {
     }
   };
   const serviceFee = 10;
-  const totalAmount =
-    Number(price) * Number(booking.guestSize) + Number(serviceFee);
+  useEffect(() => {
+    const totalAmount =
+      Number(price) * Number(booking.guestSize) + Number(serviceFee);
+    setTotalFee(totalAmount === serviceFee ? 0 : totalAmount);
+  }, [booking.guestSize, price]);
   return (
     <div className='booking'>
       <div className='booking__top d-flex align-items-center justify-content-between '>
@@ -133,9 +135,7 @@ function Booking({ tour, avgRating }) {
           </ListGroupItem> */}
           <ListGroupItem className='border-0 px-0 total'>
             <h5>Total</h5>
-            <span>
-              ${setTotalFee(totalAmount === serviceFee ? 0 : totalAmount)}
-            </span>
+            <span>${totalFee === 0 ? serviceFee : totalFee}</span>
           </ListGroupItem>
         </ListGroup>
         <Button

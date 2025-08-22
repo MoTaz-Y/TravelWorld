@@ -57,3 +57,46 @@ header {
   box-shadow: 3px 3px 8px -3px #ddd;
   z-index: 999;
 }
+
+/* make responsive */
+@media only screen and (max-width: 992px) {
+  .logo img {
+    width: 50%;
+  }
+  .navigation {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 80px;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.441);
+    z-index: 12;
+    display: none;
+  }
+  /* .navigation.active {
+    display: block;
+  } */
+  .menu {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 25%;
+    height: 100%;
+    background-color: #fff;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    transition: all 0.3s ease;
+    /* transform: translateX(0%); */
+    line-height: 0.5rem !important;
+    z-index: 13;
+  }
+  .mobile__menu {
+    display: block;
+  }
+  .show__menu {
+    transform: translateX(0);
+    display: block;
+  }
+}
