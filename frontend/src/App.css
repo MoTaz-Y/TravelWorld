@@ -9,7 +9,10 @@
   --font-name: 'Montserrat', sans-serif;
   --subtitle-font-name: 'Island Moments', cursive;
 }
-
+html,
+body {
+  overflow-x: hidden;
+}
 * {
   margin: 0;
   padding: 0;

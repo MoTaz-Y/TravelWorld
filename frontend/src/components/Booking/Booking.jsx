@@ -4,6 +4,12 @@ import { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import { BASE_URL } from '../../utils/config';
+import {
+  validateName,
+  validatePhone,
+  validateGuests,
+  validateDate,
+} from '../../utils/validator';
 function Booking({ tour, avgRating }) {
   const { price, reviews, title } = tour;
   const { user } = useContext(AuthContext);
@@ -20,12 +26,45 @@ function Booking({ tour, avgRating }) {
     guestSize: '',
     totalFee: totalFee,
   });
+
+  const [nameMsg, setNameMsg] = useState('');
+  const [nameValid, setNameValid] = useState(null);
+
+  const [phoneMsg, setPhoneMsg] = useState('');
+  const [phoneValid, setPhoneValid] = useState(null);
+
+  const [guestMsg, setGuestMsg] = useState('');
+  const [guestValid, setGuestValid] = useState(null);
+
+  const [dateMsg, setDateMsg] = useState('');
+  const [dateValid, setDateValid] = useState(null);
   // const [editBooking, setEditBooking] = useState(null);
   const handleChange = (e) => {
+    const { id, value } = e.target;
     setBooking((prev) => ({
       ...prev,
-      [e.target.id]: e.target.value,
+      [id]: value,
     }));
+    if (id === 'fullName') {
+      const { valid, message } = validateName(value);
+      setNameMsg(message);
+      setNameValid(valid);
+    }
+    if (id === 'phone') {
+      const { valid, message } = validatePhone(value);
+      setPhoneMsg(message);
+      setPhoneValid(valid);
+    }
+    if (id === 'guestSize') {
+      const { valid, message } = validateGuests(value);
+      setGuestMsg(message);
+      setGuestValid(valid);
+    }
+    if (id === 'bookAt') {
+      const { valid, message } = validateDate(value);
+      setDateMsg(message);
+      setDateValid(valid);
+    }
   };
 
   // send data to server
@@ -33,6 +72,9 @@ function Booking({ tour, avgRating }) {
     e.preventDefault();
     if (!user || !user.token || user === null || user === undefined) {
       return alert('Please login to book a tour');
+    }
+    if (!nameValid || !phoneValid || !guestValid || !dateValid) {
+      return;
     }
     try {
       let url = `${BASE_URL}/bookings/tours/${tourId}`;
@@ -53,7 +95,7 @@ function Booking({ tour, avgRating }) {
       const data = await res.json();
       console.log('data', data);
       if (!res.ok) return alert(data.message);
-      navigate('/thank-you');
+      navigate('/thank-you', { state: { type: 'thank you' } });
     } catch (err) {
       return alert(err.message);
     }
@@ -79,7 +121,7 @@ function Booking({ tour, avgRating }) {
       <div className='booking__form'>
         <h5>Information</h5>
         <Form className='booking__info-form ' onSubmit={handleSubmit}>
-          <FormGroup>
+          <FormGroup className='form__group-booking'>
             <input
               type='text'
               placeholder='Full Name'
@@ -87,8 +129,11 @@ function Booking({ tour, avgRating }) {
               required
               onChange={handleChange}
             />
+            {nameMsg && (
+              <p style={{ color: nameValid ? 'green' : 'red' }}>{nameMsg}</p>
+            )}
           </FormGroup>
-          <FormGroup>
+          <FormGroup className='form__group-booking'>
             <input
               type='number'
               placeholder='Phone Number'
@@ -96,22 +141,38 @@ function Booking({ tour, avgRating }) {
               required
               onChange={handleChange}
             />
+            {phoneMsg && (
+              <p style={{ color: phoneValid ? 'green' : 'red' }}>{phoneMsg}</p>
+            )}
           </FormGroup>
-          <FormGroup className='d-flex align-items-center justify-content-between'>
-            <input
-              type='date'
-              placeholder=''
-              id='bookAt'
-              required
-              onChange={handleChange}
-            />
-            <input
-              type='data'
-              placeholder='Guests'
-              id='guestSize'
-              required
-              onChange={handleChange}
-            />
+          <FormGroup className='d-flex  justify-content-between form__group-booking'>
+            <div className=''>
+              {' '}
+              <input
+                type='date'
+                placeholder=''
+                id='bookAt'
+                required
+                onChange={handleChange}
+              />
+              {dateMsg && (
+                <p style={{ color: dateValid ? 'green' : 'red' }}>{dateMsg}</p>
+              )}
+            </div>
+            <duv>
+              <input
+                type='data'
+                placeholder='Guests'
+                id='guestSize'
+                required
+                onChange={handleChange}
+              />
+              {guestMsg && (
+                <p style={{ color: guestValid ? 'green' : 'red' }}>
+                  {guestMsg}
+                </p>
+              )}
+            </duv>
           </FormGroup>
         </Form>
       </div>

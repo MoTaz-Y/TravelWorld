@@ -80,3 +80,11 @@
   font-weight: 700;
   font-size: 1.1rem;
 }
+
+.form__group-booking input {
+  margin: 0;
+}
+.form__group-booking p {
+  margin: 0;
+  font-size: 0.7rem;
+}

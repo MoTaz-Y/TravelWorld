@@ -6,23 +6,67 @@ import userIcon from '../assets/images/user.png';
 import { useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext.jsx';
 import { BASE_URL } from '../utils/config';
-
+import {
+  validateEmail,
+  validatePassword,
+  validateConfirmPassword,
+  validateName,
+} from '../utils/validator.js';
 const Register = () => {
   const [credentials, setCredentials] = useState({
     email: undefined,
     password: undefined,
     userName: undefined,
   });
+  const [emailMsg, setEmailMsg] = useState('');
+  const [emailValid, setEmailValid] = useState(null);
+
+  const [passwordMsg, setPasswordMsg] = useState('');
+  const [passwordValid, setPasswordValid] = useState(null);
+
+  const [confirmPasswordMsg, setConfirmPasswordMsg] = useState('');
+  const [confirmPasswordValid, setConfirmPasswordValid] = useState(null);
+
+  const [nameMsg, setNameMsg] = useState('');
+  const [nameValid, setNameValid] = useState(null);
   const { dispatch } = useContext(AuthContext);
   const navigate = useNavigate();
   const handleChange = (e) => {
+    const { id, value } = e.target;
     setCredentials((prev) => ({
       ...prev,
-      [e.target.id]: e.target.value,
+      [id]: value,
     }));
+    if (id === 'email') {
+      const { valid, message } = validateEmail(value);
+      setEmailMsg(message);
+      setEmailValid(valid);
+    }
+
+    if (id === 'password') {
+      const { valid, message } = validatePassword(value);
+      setPasswordMsg(message);
+      setPasswordValid(valid);
+    }
+    if (id === 'confirmPassword') {
+      const { valid, message } = validateConfirmPassword(
+        value,
+        credentials.password
+      );
+      setConfirmPasswordMsg(message);
+      setConfirmPasswordValid(valid);
+    }
+    if (id === 'userName') {
+      const { valid, message } = validateName(value);
+      setNameMsg(message);
+      setNameValid(valid);
+    }
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!emailValid || !passwordValid || !nameValid) {
+      return;
+    }
     try {
       const res = await fetch(`${BASE_URL}/users/register`, {
         method: 'POST',
@@ -32,11 +76,18 @@ const Register = () => {
         body: JSON.stringify(credentials),
       });
       const data = await res.json();
-      console.log('response', data);
-
-      if (!res.ok) alert(data.message);
+      console.log('response', data.message);
+      if (res.status === 402) {
+        setNameMsg(data.message);
+        setNameValid(false);
+        return;
+      }
+      if (!res.ok)
+        return navigate('/thank-you', {
+          state: { type: 'registerFail', message: data.message },
+        });
       dispatch({ type: 'REGISTER_SUCCESS', payload: data.data });
-      navigate('/login');
+      navigate('/thank-you', { state: { type: 'register' } });
     } catch (err) {
       console.log(err);
       dispatch({ type: 'LOGIN_FAILURE', payload: err.response.data.message });
@@ -58,7 +109,7 @@ const Register = () => {
                 </div>
                 <h2>Register</h2>
                 <Form onSubmit={handleSubmit}>
-                  <FormGroup>
+                  <FormGroup className='form__group-login'>
                     {/* <label htmlFor='email'>Email</label> */}
                     <input
                       type='text'
@@ -67,8 +118,13 @@ const Register = () => {
                       required
                       onChange={handleChange}
                     />
+                    {nameMsg && (
+                      <p style={{ color: nameValid ? 'green' : 'red' }}>
+                        {nameMsg}
+                      </p>
+                    )}
                   </FormGroup>
-                  <FormGroup>
+                  <FormGroup className='form__group-login'>
                     {/* <label htmlFor='email'>Email</label> */}
                     <input
                       type='email'
@@ -77,9 +133,14 @@ const Register = () => {
                       required
                       onChange={handleChange}
                     />
+                    {emailMsg && (
+                      <p style={{ color: emailValid ? 'green' : 'red' }}>
+                        {emailMsg}
+                      </p>
+                    )}
                   </FormGroup>
 
-                  <FormGroup>
+                  <FormGroup className='form__group-login'>
                     {/* <label htmlFor='password'>Password</label> */}
                     <input
                       type='password'
@@ -88,6 +149,30 @@ const Register = () => {
                       required
                       onChange={handleChange}
                     />
+                    {passwordMsg && (
+                      <p style={{ color: passwordValid ? 'green' : 'red' }}>
+                        {passwordMsg}
+                      </p>
+                    )}
+                  </FormGroup>
+                  <FormGroup className='form__group-login'>
+                    {/* <label htmlFor='password'>Password</label> */}
+                    <input
+                      type='password'
+                      placeholder='Confirm Password'
+                      id='confirmPassword'
+                      required
+                      onChange={handleChange}
+                    />
+                    {confirmPasswordMsg && (
+                      <p
+                        style={{
+                          color: confirmPasswordValid ? 'green' : 'red',
+                        }}
+                      >
+                        {confirmPasswordMsg}
+                      </p>
+                    )}
                   </FormGroup>
                   <Button
                     color='btn secondary__btn auth__btn'

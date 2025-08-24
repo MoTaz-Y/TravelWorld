@@ -1,10 +1,10 @@
-import User from '../../models/userModel.js';
+// import User from '../../models/userModel.js';
 import catchAsync from '../../middleware/catchAsync.js';
 import AppError from '../../utils/appError.js';
-import ApiFeatures from '../../utils/apiFeatures.js';
+// import ApiFeatures from '../../utils/apiFeatures.js';
 import httpStatusText from '../../utils/httpStatusText.js';
 import jwt from 'jsonwebtoken';
-import crypto from 'crypto';
+// import crypto from 'crypto';
 import bcrypt from 'bcryptjs';
 import { generateToken } from '../../config/jwtToken.js';
 import comparePassword from '../../utils/comparePassword.js';
@@ -15,8 +15,6 @@ import validateMongodbId from '../../utils/validateMongodbId.js';
 const registerUser = (User) =>
   catchAsync(async (req, res, next) => {
     const { userName, email, password } = req.body;
-    console.log('req.body=====================');
-    console.log('req.body', req.body);
     if (!userName || !email || !password) {
       return next(
         new AppError(
@@ -27,10 +25,23 @@ const registerUser = (User) =>
       );
     }
     const userExists = await User.findOne({ email });
-    console.log('userExists', userExists);
     if (userExists) {
       return next(
-        new AppError('User already exists', 400, httpStatusText.BAD_REQUEST)
+        new AppError(
+          'User already exists please login',
+          401,
+          httpStatusText.BAD_REQUEST
+        )
+      );
+    }
+    const userNameExists = await User.findOne({ userName });
+    if (userNameExists) {
+      return next(
+        new AppError(
+          'Username already exists please choose another',
+          402,
+          httpStatusText.BAD_REQUEST
+        )
       );
     }
     const salt = await bcrypt.genSalt(12);
@@ -44,9 +55,10 @@ const registerUser = (User) =>
       // role,
     });
     if (!newUser) {
-      return next(
+      const error = next(
         new AppError('User not created', 400, httpStatusText.BAD_REQUEST)
       );
+      return error;
     }
     res.status(201).json({
       status: 'success',

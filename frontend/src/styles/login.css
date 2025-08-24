@@ -63,6 +63,7 @@
 .login__form button:hover {
   background-color: var(--secondary-color);
 } */
+
 .auth__btn {
   width: 100%;
   background-color: var(--heading-color) !important;
@@ -83,4 +84,11 @@
 
 .login__form p a:hover {
   color: var(--text-color);
+}
+.form__group-login input {
+  margin: 0;
+}
+.form__group-login p {
+  margin: 0;
+  font-size: 0.7rem;
 }
