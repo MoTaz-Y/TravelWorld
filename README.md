@@ -3,13 +3,14 @@
       <img src="./frontend/src/assets/images/readme.png" alt="Project Banner">
   <br />
 
-  <div>
-    <img src="https://img.shields.io/badge/-React_JS-black?style=for-the-badge&logoColor=white&logo=react&color=61DAFB" alt="react.js" />
-    <img src="https://img.shields.io/badge/-Appwrite-black?style=for-the-badge&logoColor=white&logo=appwrite&color=FD366E" alt="appwrite" />
-    <img src="https://img.shields.io/badge/-Tailwind_CSS-black?style=for-the-badge&logoColor=white&logo=tailwindcss&color=06B6D4" alt="tailwindcss" />
-    <img src="https://img.shields.io/badge/-React_Query-black?style=for-the-badge&logoColor=white&logo=reactquery&color=FF4154" alt="reactquery" />
-    <img src="https://img.shields.io/badge/-Typescript-black?style=for-the-badge&logoColor=white&logo=typescript&color=3178C6" alt="typescript" />
-  </div>
+<div>
+  <img src="https://img.shields.io/badge/-JavaScript-black?style=for-the-badge&logo=javascript&logoColor=F7DF1E" alt="javascript" />
+  <img src="https://img.shields.io/badge/-React-black?style=for-the-badge&logo=react&logoColor=61DAFB" alt="react" />
+  <img src="https://img.shields.io/badge/-Node.js-black?style=for-the-badge&logo=node.js&logoColor=339933" alt="node.js" />
+  <img src="https://img.shields.io/badge/-Express.js-black?style=for-the-badge&logo=express&logoColor=white" alt="express.js" />
+  <img src="https://img.shields.io/badge/-MongoDB-black?style=for-the-badge&logo=mongodb&logoColor=47A248" alt="mongodb" />
+  <img src="https://img.shields.io/badge/-Reactstrap-black?style=for-the-badge&logo=bootstrap&logoColor=7952B3" alt="reactstrap" />
+</div>
 
   <h3 align="center">🏝️ Tours Booking Website  </h3>
 
