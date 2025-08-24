@@ -125,3 +125,42 @@
   margin-top: 1rem;
   color: var(--text-color);
 }
+
+/* make responsive */
+
+@media (max-width: 992px) {
+  /* .hero__content h1 {
+    font-size: 2.2rem;
+  }
+  .hero__content p {
+    font-size: 1rem;
+  } */
+  .service__title,
+  .featured__tour-title,
+  .experience__content h2,
+  .gallery__title,
+  .testimonial__title {
+    font-size: 2rem;
+  }
+  .hero__img-box {
+    display: none;
+  }
+  .hero__video-box {
+    display: block;
+  }
+  .service__title {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero__content h1 {
+    font-size: 1.8rem;
+  }
+  .hero__content p {
+    font-size: 0.9rem;
+  }
+  .service__title {
+    font-size: 1.5rem;
+  }
+}

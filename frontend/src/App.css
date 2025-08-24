@@ -1,14 +1,65 @@
 @import url('https://fonts.googleapis.com/css2?family=Island+Moments&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
 
-:root {
+/* color pallete 1 */
+/* :root {
   --primary-color: #ff7e01;
   --secondary-color: #faa935;
   --heading-color: #0b2727;
   --text-color: #6e7074;
   --font-name: 'Montserrat', sans-serif;
   --subtitle-font-name: 'Island Moments', cursive;
+} */
+
+/* color pallete 2 */
+/* :root {
+  --primary-color: #0077b6;
+  --secondary-color: #00b4d8;
+  --heading-color: #03045e;
+  --text-color: #495057;
+  --font-name: 'Montserrat', sans-serif;
+  --subtitle-font-name: 'Poppins', cursive;
+} */
+/* color pallete 3 */
+/* :root {
+  --primary-color: #ff4d6d;
+  --secondary-color: #ff9e00;
+  --heading-color: #2b2d42;
+  --text-color: #6c757d;
+  --font-name: 'Montserrat', sans-serif;
+  --subtitle-font-name: 'Dancing Script', cursive;
+} */
+
+/* color pallete 4 */
+:root {
+  --primary-color: #2d6a4f;
+  --secondary-color: #52b788;
+  --heading-color: #081c15;
+  --text-color: #6c757d;
+  --font-name: 'Montserrat', sans-serif;
+  --subtitle-font-name: 'Roboto Slab', serif;
 }
+
+/* color pallete 5 */
+/* :root {
+  --primary-color: #7209b7;
+  --secondary-color: #f72585;
+  --heading-color: #3c096c;
+  --text-color: #5c5c5c;
+  --font-name: 'Montserrat', sans-serif;
+  --subtitle-font-name: 'Lobster', cursive;
+} */
+
+/* color pallete 6 */
+/* :root {
+  --primary-color: #495057;
+  --secondary-color: #adb5bd;
+  --heading-color: #212529;
+  --text-color: #868e96;
+  --font-name: 'Montserrat', sans-serif;
+  --subtitle-font-name: 'Raleway', sans-serif;
+} */
+
 html,
 body {
   overflow-x: hidden;
@@ -107,5 +158,11 @@ ul {
 
   section {
     padding: 40px 0px;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .section__subtitle {
+    font-size: 1.3rem;
   }
 }

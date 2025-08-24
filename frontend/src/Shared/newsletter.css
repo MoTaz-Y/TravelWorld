@@ -49,3 +49,20 @@
 .newsletter__input button:hover {
   background: var(--secondary-color);
 }
+
+/* make responsive */
+@media only screen and (max-width: 992px) {
+  .newsletter__content h2 {
+    font-size: 2rem;
+  }
+}
+
+/* make responsive */
+@media only screen and (max-width: 768px) {
+  .newsletter__content h2 {
+    font-size: 1.5rem;
+  }
+  .newsletter__image {
+    display: none;
+  }
+}

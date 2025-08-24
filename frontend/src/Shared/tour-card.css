@@ -94,3 +94,33 @@
 .booking__btn a:hover {
   color: #f0efce;
 }
+/* make responsive */
+@media (min-width: 768px) {
+  .tour__title {
+    font-size: 1rem;
+  }
+  .card__bottom h5 {
+    font-size: 0.7rem;
+  }
+  .booking__btn {
+    padding: 0.2rem 0.4rem !important;
+  }
+  .booking__btn a {
+    font-size: 0.7rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .tour__title {
+    font-size: 1.2rem;
+  }
+  .card__bottom h5 {
+    font-size: 1rem;
+  }
+  .booking__btn {
+    padding: 0.2rem 0.5rem !important;
+  }
+  .booking__btn a {
+    font-size: 0.9rem;
+  }
+}

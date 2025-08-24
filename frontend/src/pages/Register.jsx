@@ -98,7 +98,7 @@ const Register = () => {
     <section>
       <Container>
         <Row>
-          <Col lg='8' className='m-auto'>
+          <Col lg='8' md='8' sm='10' className='m-auto'>
             <div className='login__container d-flex justify-content-between'>
               <div className='login__img'>
                 <img src={registerImg} alt='user' />

@@ -54,7 +54,7 @@ const Tours = () => {
             <Row>
               {tourData?.data?.data.map((tour) => {
                 return (
-                  <Col lg='4' md='6' key={tour._id} className='mb-4'>
+                  <Col lg='4' md='6' sm='6' key={tour._id} className='mb-4'>
                     <TourCard tour={tour} />
                   </Col>
                 );
