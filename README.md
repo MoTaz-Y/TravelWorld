@@ -118,7 +118,7 @@ Assets used in the project are [here](https://drive.google.com/file/d/13_7FofRAC
 
 <div align="center">
 
-<img src="./public/assets/MoTaz_Y.png" width="100" alt="MoTaz_Y"  />
+<img src="https://raw.githubusercontent.com/MoTaz-Y/SnapGram/refs/heads/main/public/assets/MoTaz_Y.png" width="100" alt="MoTaz_Y"  />
 
 </div>
 
