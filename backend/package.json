@@ -4,20 +4,14 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodeindex.js",
+    "start": "node index.js",
     "dev": "nodemon index.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
   "dependencies": {
     "bcryptjs": "^3.0.2",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^17.2.0",
-    "experss": "^0.0.1-security",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.18.0",
@@ -26,5 +20,8 @@
     "validate": "^5.2.0",
     "validator": "^13.15.15",
     "zod": "^4.0.10"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }

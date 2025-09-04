@@ -26,12 +26,17 @@ config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 const corsOptions = {
-  origin: true,
+  origin: [
+    'http://localhost:3000', // للتجربة المحلية
+    'https://WonderTour.vercel.app', // غيّرها بدومين Vercel بتاعك
+  ],
   credentials: true,
 };
 
 // connectDB(); //
 mongoose.set('strictQuery', false);
+app.set('trust proxy', 1);
+
 app.use(cors(corsOptions));
 // app.use(morgan('dev')); //
 app.use(express.json());
