@@ -36,7 +36,9 @@ const corsOptions = {
 // connectDB(); //
 mongoose.set('strictQuery', false);
 app.set('trust proxy', 1);
-
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok' });
+});
 app.use(cors(corsOptions));
 // app.use(morgan('dev')); //
 app.use(express.json());
