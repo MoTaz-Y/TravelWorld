@@ -1,1 +1,2 @@
-export const BASE_URL = 'http://localhost:3000/api';
+export const BASE_URL = 'https://travelworld-production.up.railway.app/api';
+// http://localhost:3000/api
