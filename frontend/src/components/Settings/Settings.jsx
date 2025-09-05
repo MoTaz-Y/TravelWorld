@@ -1,4 +1,4 @@
-import './Settings.css';
+import './settings.css';
 import { useState } from 'react';
 import { BASE_URL } from '../../utils/config';
 
