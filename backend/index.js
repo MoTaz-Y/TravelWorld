@@ -25,19 +25,8 @@ config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const allowedOrigins = [
-  'http://localhost:3000',
-  'https://travel-world-chi.vercel.app',
-];
-
 const corsOptions = {
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+  origin: ['https://travel-world-chi.vercel.app'], // https://localhost:3000
   credentials: true,
 };
 
