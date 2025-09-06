@@ -93,7 +93,6 @@ function Booking({ tour, avgRating }) {
         body: JSON.stringify(booking),
       });
       const data = await res.json();
-      console.log('data', data);
       if (!res.ok) return alert(data.message);
       navigate('/thank-you', { state: { type: 'thank you' } });
     } catch (err) {
