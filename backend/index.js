@@ -16,7 +16,8 @@ import userRoutes from './routes/userRoutes.js';
 import tourRoutes from './routes/tourRoutes.js';
 import reviewRoutes from './routes/reviewsRoutes.js';
 import bookingRoutes from './routes/bookingsRoutes.js';
-// import paymentRoutes from './routes/paymentRoutes.js';//
+import dashboardRoutes from './routes/dashboardRoutes.js';
+// import paymentRoutes from './routes/paymentRoutes.js'//
 
 const __filename = fileURLToPath(import.meta.url); //
 const __dirname = dirname(__filename); //
@@ -26,7 +27,7 @@ config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 const corsOptions = {
-  origin: ['https://travel-world-chi.vercel.app'], // https://localhost:3000
+  origin: ['http://localhost:5173', 'http://localhost:3000'], // ['http://localhost:5173', 'http://localhost:3000'] ['https://travel-world-chi.vercel.app']
   credentials: true,
 };
 
@@ -38,16 +39,19 @@ app.get('/health', (req, res) => {
 });
 app.use(cors(corsOptions));
 // app.use(morgan('dev')); //
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(cookieParser());
-app.use(express.urlencoded({ extended: true })); //
 
+// Routes
 app.use('/api/users', userRoutes);
 app.use('/api/tours', tourRoutes);
 app.use('/api/reviews', reviewRoutes);
-app.use('/api/bookings', bookingRoutes); //
-// app.use('/api/payments', paymentRoutes);//
+app.use('/api/bookings', bookingRoutes);
+app.use('/api/dashboard', dashboardRoutes);
+// app.use('/api/payments', paymentRoutes)//
 
+// Keep static files for now (you can remove later)
 app.use(express.static(path.join(__dirname, 'public/images/'))); //
 // app.get('*', (req, res) => {
 //   //
@@ -55,6 +59,11 @@ app.use(express.static(path.join(__dirname, 'public/images/'))); //
 // });
 app.use(notFound); //
 app.use(errorHandler); //
+
+// Serve dashboard
+app.get('/dashboard', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/dashboard.html'));
+});
 
 connectDB().then(() => {
   //

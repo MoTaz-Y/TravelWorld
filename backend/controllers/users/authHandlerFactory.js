@@ -9,12 +9,18 @@ import bcrypt from 'bcryptjs';
 import { generateToken } from '../../config/jwtToken.js';
 import comparePassword from '../../utils/comparePassword.js';
 import validateMongodbId from '../../utils/validateMongodbId.js';
+import { sendOTPEmail, sendWelcomeEmail } from '../../utils/emailService.js';
 
-// Register User Done
-// localhost:3000/api/auth/register Post
+// Generate 6-digit OTP
+const generateOTP = () => {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+};
+
+// Register User with OTP verification
 const registerUser = (User) =>
   catchAsync(async (req, res, next) => {
     const { userName, email, password } = req.body;
+
     if (!userName || !email || !password) {
       return next(
         new AppError(
@@ -24,16 +30,40 @@ const registerUser = (User) =>
         )
       );
     }
+
+    // Check if email domain is allowed
+    const allowedDomains = [
+      'gmail.com',
+      'yahoo.com',
+      'hotmail.com',
+      'outlook.com',
+      'live.com',
+      'icloud.com',
+      'me.com',
+      'mac.com',
+    ];
+    const emailDomain = email.split('@')[1];
+    if (!allowedDomains.includes(emailDomain)) {
+      return next(
+        new AppError(
+          'Email domain is not allowed. Please use Gmail, Yahoo, Hotmail, or Outlook',
+          400,
+          httpStatusText.BAD_REQUEST
+        )
+      );
+    }
+
     const userExists = await User.findOne({ email });
     if (userExists) {
       return next(
         new AppError(
-          'User already exists please login',
+          'Email already exists. Please use a different email or try to login.',
           401,
           httpStatusText.BAD_REQUEST
         )
       );
     }
+
     const userNameExists = await User.findOne({ userName });
     if (userNameExists) {
       return next(
@@ -44,41 +74,196 @@ const registerUser = (User) =>
         )
       );
     }
+
+    // Generate OTP and expiry
+    const otp = generateOTP();
+    const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+
+    // Hash password
     const salt = await bcrypt.genSalt(12);
     const hashPassword = await bcrypt.hash(password, salt);
+
+    // Create user with OTP data
     const newUser = await User.create({
       userName,
       email,
       password: hashPassword,
-      // passwordConfirm: hashPassword,
-      // phone,
-      // role,
+      otp: otp,
+      otpExpiry: otpExpiry,
+      isVerified: false,
     });
+
     if (!newUser) {
-      const error = next(
+      return next(
         new AppError('User not created', 400, httpStatusText.BAD_REQUEST)
       );
-      return error;
     }
+
+    // Send OTP email
+    try {
+      await sendOTPEmail(email, otp);
+    } catch (error) {
+      // If email fails, delete user and return error
+      await User.findByIdAndDelete(newUser._id);
+      return next(
+        new AppError(
+          'Failed to send verification email. Please check your email address.',
+          500,
+          httpStatusText.INTERNAL_SERVER_ERROR
+        )
+      );
+    }
+
     res.status(201).json({
       status: 'success',
-      message: 'User created successfully',
+      message:
+        'User created successfully. Please check your email for verification code.',
       data: {
         _id: newUser._id,
         name: newUser.userName,
         email: newUser.email,
-        // phone: newUser.phone,
-        // photo: newUser.photo,
-        token: generateToken(newUser._id),
+        requiresVerification: true,
       },
     });
   });
 
-// Login User Done
-// localhost:3000/api/users/login Post
+// Verify OTP
+const verifyOTP = (User) =>
+  catchAsync(async (req, res, next) => {
+    const { email, otp } = req.body;
+
+    if (!email || !otp) {
+      return next(
+        new AppError(
+          'Please provide email and OTP',
+          400,
+          httpStatusText.BAD_REQUEST
+        )
+      );
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return next(
+        new AppError('User not found', 404, httpStatusText.NOT_FOUND)
+      );
+    }
+
+    if (user.isVerified) {
+      return next(
+        new AppError(
+          'User is already verified',
+          400,
+          httpStatusText.BAD_REQUEST
+        )
+      );
+    }
+
+    // Check if OTP is expired
+    if (new Date() > user.otpExpiry) {
+      return next(
+        new AppError(
+          'OTP has expired. Please request a new one.',
+          400,
+          httpStatusText.BAD_REQUEST
+        )
+      );
+    }
+
+    // Check if OTP matches
+    if (user.otp !== otp) {
+      return next(new AppError('Invalid OTP', 400, httpStatusText.BAD_REQUEST));
+    }
+
+    // Mark user as verified
+    user.isVerified = true;
+    user.otp = undefined;
+    user.otpExpiry = undefined;
+    await user.save();
+
+    // Send welcome email
+    try {
+      await sendWelcomeEmail(user.email, user.userName);
+    } catch (error) {
+      console.error('Failed to send welcome email:', error);
+    }
+
+    const token = generateToken(user._id);
+
+    res.status(200).json({
+      status: 'success',
+      message: 'Email verified successfully. Welcome to TravelWorld!',
+      data: {
+        _id: user._id,
+        userName: user.userName,
+        email: user.email,
+        phone: user.phone || null,
+        role: user.role,
+        token: token,
+      },
+    });
+  });
+
+// Resend OTP
+const resendOTP = (User) =>
+  catchAsync(async (req, res, next) => {
+    const { email } = req.body;
+
+    if (!email) {
+      return next(
+        new AppError('Please provide email', 400, httpStatusText.BAD_REQUEST)
+      );
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return next(
+        new AppError('User not found', 404, httpStatusText.NOT_FOUND)
+      );
+    }
+
+    if (user.isVerified) {
+      return next(
+        new AppError(
+          'User is already verified',
+          400,
+          httpStatusText.BAD_REQUEST
+        )
+      );
+    }
+
+    // Generate new OTP
+    const otp = generateOTP();
+    const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+
+    user.otp = otp;
+    user.otpExpiry = otpExpiry;
+    await user.save();
+
+    // Send OTP email
+    try {
+      await sendOTPEmail(email, otp);
+    } catch (error) {
+      return next(
+        new AppError(
+          'Failed to send verification email',
+          500,
+          httpStatusText.INTERNAL_SERVER_ERROR
+        )
+      );
+    }
+
+    res.status(200).json({
+      status: 'success',
+      message: 'OTP sent successfully. Please check your email.',
+    });
+  });
+
+// Login User with verification check
 const loginUser = (User) =>
   catchAsync(async (req, res, next) => {
     const { email, password } = req.body;
+
     if (!email || !password) {
       return next(
         new AppError(
@@ -88,19 +273,59 @@ const loginUser = (User) =>
         )
       );
     }
+
+    // Check email domain
+    const allowedDomains = [
+      'gmail.com',
+      'yahoo.com',
+      'hotmail.com',
+      'outlook.com',
+      'live.com',
+      'icloud.com',
+      'me.com',
+      'mac.com',
+    ];
+    const emailDomain = email.split('@')[1];
+    if (!allowedDomains.includes(emailDomain)) {
+      return next(
+        new AppError(
+          'Email domain is not allowed. Please use Gmail, Yahoo, Hotmail, or Outlook',
+          400,
+          httpStatusText.BAD_REQUEST
+        )
+      );
+    }
+
     const user = await User.findOne({ email });
     if (!user) {
       return next(
-        new AppError('User not found', 400, httpStatusText.BAD_REQUEST)
+        new AppError(
+          'Email not found. Please register first.',
+          404,
+          httpStatusText.NOT_FOUND
+        )
       );
     }
+
+    // Check if user is verified
+    if (!user.isVerified) {
+      return next(
+        new AppError(
+          'Please verify your email first. You will be redirected to verification page.',
+          403,
+          httpStatusText.FORBIDDEN
+        )
+      );
+    }
+
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
     if (!isPasswordCorrect) {
       return next(
         new AppError('Incorrect password', 400, httpStatusText.BAD_REQUEST)
       );
     }
-    const token = generateToken(user._id);
+
+    const token = generateToken(user._id, user.role, user.email, user.userName);
     res
       .cookie('accessToken', token, {
         httpOnly: true,
@@ -296,4 +521,6 @@ export default {
   getUserProfile,
   updateUserProfile,
   forgotPassword,
+  verifyOTP,
+  resendOTP,
 };

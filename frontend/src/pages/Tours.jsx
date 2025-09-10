@@ -20,9 +20,10 @@ const Tours = () => {
     error,
   } = useFetch(`${BASE_URL}/tours?page=${page}`);
   const { data: tourCount } = useFetch(`${BASE_URL}/tours/count`);
+  console.log('tourData', tourData?.data?.data);
   useEffect(() => {
     const total = Number(tourCount?.data?.data ?? 0);
-    const limit = 10;
+    const limit = 9;
     if (!Number.isFinite(total) || total <= 0) {
       setPageCount(0);
     } else {

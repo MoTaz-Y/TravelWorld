@@ -16,6 +16,8 @@ const getUserProfile = authFactory.getUserProfile(User);
 const updateUserProfile = authFactory.updateUserProfile(User);
 const refreshToken = authFactory.handleRefreshToken(User);
 const forgotPassword = authFactory.forgotPassword(User);
+const verifyOTP = authFactory.verifyOTP(User);
+const resendOTP = authFactory.resendOTP(User);
 
 export default {
   registerUser,
@@ -32,4 +34,6 @@ export default {
   updateUserProfile,
   refreshToken,
   forgotPassword,
+  verifyOTP,
+  resendOTP,
 };

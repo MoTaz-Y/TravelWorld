@@ -16,9 +16,17 @@ import dotenv from 'dotenv';
 // };
 dotenv.config();
 // generate token
-export const generateToken = function (id) {
-  const token = jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRE,
-  });
-  return token;
+export const generateToken = (id, role = 'user', email, userName) => {
+  return jwt.sign(
+    {
+      id,
+      role,
+      email,
+      userName,
+    },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: process.env.JWT_EXPIRES_IN || '30d',
+    }
+  );
 };

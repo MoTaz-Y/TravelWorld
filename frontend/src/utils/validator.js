@@ -1,9 +1,32 @@
-//  Validate Email
+//  Validate Email with domain check
 export const validateEmail = (value) => {
-  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const allowedDomains = [
+    'gmail.com',
+    'yahoo.com',
+    'hotmail.com',
+    'outlook.com',
+    'live.com',
+    'icloud.com',
+    'me.com',
+    'mac.com',
+  ];
+
   if (!value) return { valid: false, message: 'Email Required' };
-  if (!regex.test(value)) return { valid: false, message: 'not a valid email' }; // الإيميل غير صحيح' };
-  return { valid: true, message: 'valid email' };
+
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!regex.test(value))
+    return { valid: false, message: 'Please enter a valid email address' };
+
+  const domain = value.split('@')[1];
+  if (!allowedDomains.includes(domain)) {
+    return {
+      valid: false,
+      message:
+        'Email domain is not allowed. Please use Gmail, Yahoo, Hotmail, or Outlook',
+    };
+  }
+
+  return { valid: true, message: 'Valid email address' };
 };
 
 //  Validate Password (8+ chars, 1 Uppercase, 1 Number, 1 Symbol)
@@ -14,10 +37,11 @@ export const validatePassword = (value) => {
     return {
       valid: false,
       message:
-        'Password must be at least 8 characters, 1 Uppercase, 1 Number, 1 Symbol',
+        'Password must be at least 8 characters with 1 uppercase letter, 1 number, and 1 special character',
     };
   return { valid: true, message: 'Password is valid' };
 };
+
 // Validate Confirm Password
 export const validateConfirmPassword = (value, password) => {
   if (!value) return { valid: false, message: 'Confirm Password Required' };
@@ -26,13 +50,13 @@ export const validateConfirmPassword = (value, password) => {
   return { valid: true, message: 'Passwords match' };
 };
 
-// Validate Phone Number
-export const validatePhone = (value) => {
-  const regex = /^[0-9]{10,11}$/;
-  if (!value) return { valid: false, message: 'Phone Number Required' };
+// Validate OTP (6 digits)
+export const validateOTP = (value) => {
+  if (!value) return { valid: false, message: 'OTP Required' };
+  const regex = /^\d{6}$/;
   if (!regex.test(value))
-    return { valid: false, message: 'Phone Number must be 10 or 11 digits' };
-  return { valid: true, message: 'Phone Number is valid' };
+    return { valid: false, message: 'OTP must be 6 digits' };
+  return { valid: true, message: 'Valid OTP' };
 };
 
 //Validate Name
@@ -60,4 +84,12 @@ export const validateDate = (value) => {
   if (chosen < today)
     return { valid: false, message: 'Chosen Date is in the past' };
   return { valid: true, message: 'Date is valid' };
+};
+
+export const validatePhone = (value) => {
+  const regex = /^[0-9]{10,11}$/;
+  if (!value) return { valid: false, message: 'Phone Number Required' };
+  if (!regex.test(value))
+    return { valid: false, message: 'Phone Number must be 10 or 11 digits' };
+  return { valid: true, message: 'Phone Number is valid' };
 };

@@ -42,19 +42,16 @@ const createOne = (Model, tourModel, UserModel) =>
   catchAsync(async (req, res, next) => {
     const tourId = req.params.tourId;
     const tour = await tourModel.findById(tourId);
-
-    console.log('tour', tour);
-    console.log('req.body', req.body);
     if (!tour) {
       return next(new AppError('No tour found with that ID', 400));
     }
     const bookingObj = { ...req.body, tourId: tourId };
     const doc = await Model.create(bookingObj);
-    // console.log('doc', doc);
-    await tour.bookings.push(doc);
+    // await tour.bookings.push(doc);
+    tour.bookings = tour.bookings || []; // لو undefined يخليه array فاضي
+    tour.bookings.push(doc._id); // خزن الـ id مش الـ object
     await tour.save();
-    // console.log('tour02', tour);
-    // console.log('user id', req.body.userId);
+    await tour.save();
     const user = await UserModel.findByIdAndUpdate(
       req.body.userId,
       { $push: { bookings: doc._id } },
@@ -96,7 +93,6 @@ const getAll = (Model) =>
 const getOne = (Model) =>
   catchAsync(async (req, res, next) => {
     const doc = await Model.findById(req.params.id);
-    console.log('doc', doc);
     if (!doc) {
       return next(new AppError('No documents found with that ID', 400));
     }

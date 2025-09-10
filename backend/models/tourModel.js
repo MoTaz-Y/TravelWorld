@@ -19,10 +19,18 @@ const tourSchema = new Schema(
       type: Number,
       required: true,
     },
-    photo: {
-      type: String,
-      required: true,
-    },
+    photos: [
+      {
+        url: {
+          type: String,
+          required: true,
+        },
+        public_id: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
     desc: {
       type: String,
       required: true,

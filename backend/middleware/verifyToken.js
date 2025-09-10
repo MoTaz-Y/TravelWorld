@@ -1,65 +1,86 @@
 import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
-dotenv.config();
 import AppError from '../utils/appError.js';
 import httpStatusText from '../utils/httpStatusText.js';
 
 const verifyToken = (req, res, next) => {
-  const token =
-    req.cookies.accessToken || req.header('Authorization') || req.body.token;
-  if (!token) {
-    return next(
-      new AppError('token is required', 401, httpStatusText.BAD_REQUEST)
-    );
-  }
-  // const token = authHeader.split(' ')[1];
-  // if (!token) {
-  //   return next(
-  //     appError.create('token is required', 401, httpStatusText.ERROR)
-  //   );
-  // }
   try {
-    // const decoded = jwt.verify(token, config.get('jwtSecret'));
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET,
-      (err, decoded) => {
-        if (err) {
-          return next(
-            new AppError('invalid token', 401, httpStatusText.BAD_REQUEST)
-          );
-        }
-        return decoded;
-      }
-    );
-    req.user = decoded;
+    const token =
+      req.cookies.accessToken ||
+      req.header('Authorization')?.replace('Bearer ', '') ||
+      req.body.token;
+
+    if (!token) {
+      return next(
+        new AppError(
+          'Access token is required',
+          401,
+          httpStatusText.UNAUTHORIZED
+        )
+      );
+    }
+
+    // Verify token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // Add user info to request
+    req.user = {
+      _id: decoded.id,
+      role: decoded.role || 'user',
+      email: decoded.email,
+      userName: decoded.userName,
+    };
+
     next();
   } catch (err) {
-    return next(new AppError('invalid token', 401, httpStatusText.BAD_REQUEST));
+    if (err.name === 'JsonWebTokenError') {
+      return next(
+        new AppError('Invalid token', 401, httpStatusText.UNAUTHORIZED)
+      );
+    }
+    if (err.name === 'TokenExpiredError') {
+      return next(
+        new AppError('Token expired', 401, httpStatusText.UNAUTHORIZED)
+      );
+    }
+    return next(
+      new AppError(
+        'Token verification failed',
+        401,
+        httpStatusText.UNAUTHORIZED
+      )
+    );
   }
 };
 
-// verify user
+// Verify user (own profile or admin)
 const verifyUser = (req, res, next) => {
-  verifyToken(req, res, () => {
-    if (req.user.id === req.params.id || req.user.isAdmin) {
+  verifyToken(req, res, (err) => {
+    if (err) return next(err);
+
+    if (req.user._id === req.params.id || req.user.role === 'admin') {
       next();
     } else {
       return next(
-        new AppError('you are not authorized', 403, httpStatusText.ERROR)
+        new AppError(
+          'You are not authorized to access this resource',
+          403,
+          httpStatusText.FORBIDDEN
+        )
       );
     }
   });
 };
 
-// verify admin
+// Verify admin
 const verifyAdmin = (req, res, next) => {
-  verifyToken(req, res, () => {
-    if (req.user.isAdmin) {
+  verifyToken(req, res, (err) => {
+    if (err) return next(err);
+
+    if (req.user.role === 'admin') {
       next();
     } else {
       return next(
-        new AppError('you are not authorized', 403, httpStatusText.ERROR)
+        new AppError('Admin access required', 403, httpStatusText.FORBIDDEN)
       );
     }
   });

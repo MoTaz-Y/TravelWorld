@@ -22,10 +22,25 @@ const TourDetails = () => {
   const { user } = useContext(AuthContext);
   const { data: tour, loading, error } = useFetch(`${BASE_URL}/tours/${id}`);
   const data = tour?.data?.data || {};
-  const { title, desc, address, reviews, city, distance, maxGroupSize } = data;
+  const {
+    title,
+    desc,
+    address,
+    reviews,
+    city,
+    distance,
+    maxGroupSize,
+    photos,
+  } = data;
   const price = data?.price || 0;
-  const photo = data?.photo || '';
+
+  // Get first photo from photos array (Cloudinary URL)
+  const photo = photos && photos.length > 0 ? photos[0].url : '';
+
   const { avgRating, totalRating } = calculateAvgRating(reviews);
+
+  console.log('photo URL:', photo);
+  console.log('all photos:', photos);
   // const options = { year: 'numeric', month: 'long', day: 'numeric' };
 
   useEffect(() => {

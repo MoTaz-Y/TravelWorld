@@ -16,6 +16,20 @@ header {
   font-weight: 500;
   font-size: 1.1rem;
 }
+.register-btn {
+  background: var(--primary-color);
+  color: white !important;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+.register-btn:hover {
+  background: var(--secondary-color);
+
+  color: white !important;
+  transform: translateY(-2px);
+}
 /* .d-flex {
   display: flex;
 }
@@ -105,4 +119,72 @@ header {
   .logo img {
     width: 45%;
   }
+}
+
+.role-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-right: 8px;
+  text-transform: uppercase;
+}
+
+.role-admin {
+  background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+  color: white;
+}
+
+.role-manager {
+  background: linear-gradient(45deg, #4ecdc4, #44b3ac);
+  color: white;
+}
+
+.role-guide {
+  background: linear-gradient(45deg, #45b7d1, #3a9fbf);
+  color: white;
+}
+
+.role-user {
+  background: linear-gradient(45deg, #96ceb4, #7fb285);
+  color: white;
+}
+
+.dashboard-link {
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  color: white !important;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.dashboard-link:hover {
+  background: linear-gradient(45deg, #5a67d8, #6b46c1);
+  color: white !important;
+  transform: translateY(-2px);
+}
+
+.logout-btn {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.logout-btn:hover {
+  background: #c82333;
+  transform: translateY(-2px);
+}
+.nav__user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: var(--heading-color);
 }

@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TravelWorld Dashboard</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f5f5f5;
+        direction: rtl;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        text-align: center;
+      }
+
+      .form-container {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #333;
+      }
+
+      input,
+      textarea {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #e1e5e9;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: border-color 0.3s;
+      }
+
+      input:focus,
+      textarea:focus {
+        outline: none;
+        border-color: #667eea;
+      }
+
+      .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .file-input-container {
+        border: 2px dashed #667eea;
+        border-radius: 8px;
+        padding: 30px;
+        text-align: center;
+        background: #f8f9ff;
+        transition: all 0.3s;
+      }
+
+      .file-input-container:hover {
+        background: #eef0ff;
+        border-color: #5a67d8;
+      }
+
+      .file-input-container.dragover {
+        background: #e6fffa;
+        border-color: #38b2ac;
+      }
+
+      #images {
+        display: none;
+      }
+
+      .image-preview {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 15px;
+      }
+
+      .preview-item {
+        position: relative;
+        width: 100px;
+        height: 100px;
+      }
+
+      .preview-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 8px;
+      }
+
+      .preview-item .remove-btn {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background: red;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+        font-size: 12px;
+      }
+
+      .btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 15px 30px;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.2s;
+        width: 100%;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+      }
+
+      .btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .tours-list {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      }
+
+      .tour-item {
+        display: flex;
+        gap: 20px;
+        padding: 20px;
+        border-bottom: 1px solid #eee;
+      }
+
+      .tour-item:last-child {
+        border-bottom: none;
+      }
+
+      .tour-images {
+        display: flex;
+        gap: 10px;
+      }
+
+      .tour-image {
+        width: 80px;
+        height: 80px;
+        border-radius: 8px;
+        object-fit: cover;
+      }
+
+      .tour-info h3 {
+        margin-bottom: 10px;
+        color: #333;
+      }
+
+      .tour-info p {
+        color: #666;
+        margin-bottom: 5px;
+      }
+
+      .loading {
+        display: none;
+        text-align: center;
+        color: #667eea;
+        font-size: 18px;
+        margin: 20px 0;
+      }
+
+      .success-message {
+        display: none;
+        background: #d4edda;
+        color: #155724;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        border: 1px solid #c3e6cb;
+      }
+
+      .error-message {
+        display: none;
+        background: #f8d7da;
+        color: #721c24;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        border: 1px solid #f5c6cb;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>🏝️ TravelWorld Dashboard</h1>
+        <p>إدارة الرحلات والصور</p>
+      </div>
+
+      <div id="successMessage" class="success-message">
+        تم إضافة الرحلة بنجاح! ✅
+      </div>
+
+      <div id="errorMessage" class="error-message">حدث خطأ في إضافة الرحلة</div>
+
+      <div class="form-container">
+        <h2 style="margin-bottom: 30px; color: #333">إضافة رحلة جديدة</h2>
+
+        <form id="tourForm">
+          <div class="form-group">
+            <label for="title">عنوان الرحلة *</label>
+            <input type="text" id="title" name="title" required />
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px">
+            <div class="form-group">
+              <label for="city">المدينة *</label>
+              <input type="text" id="city" name="city" required />
+            </div>
+
+            <div class="form-group">
+              <label for="address">العنوان *</label>
+              <input type="text" id="address" name="address" required />
+            </div>
+          </div>
+
+          <div
+            style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px"
+          >
+            <div class="form-group">
+              <label for="distance">المسافة (كم) *</label>
+              <input
+                type="number"
+                id="distance"
+                name="distance"
+                required
+                min="1"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="price">السعر ($) *</label>
+              <input type="number" id="price" name="price" required min="1" />
+            </div>
+
+            <div class="form-group">
+              <label for="maxGroupSize">الحد الأقصى للمجموعة *</label>
+              <input
+                type="number"
+                id="maxGroupSize"
+                name="maxGroupSize"
+                required
+                min="1"
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="desc">وصف الرحلة *</label>
+            <textarea id="desc" name="desc" rows="4" required></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>صور الرحلة *</label>
+            <div class="file-input-container" id="fileDropArea">
+              <div>
+                <p style="margin-bottom: 10px; font-size: 18px">
+                  📸 اسحب وأفلت الصور هنا
+                </p>
+                <p style="color: #666; margin-bottom: 15px">أو</p>
+                <button
+                  type="button"
+                  onclick="document.getElementById('images').click()"
+                  style="
+                    background: #667eea;
+                    color: white;
+                    padding: 10px 20px;
+                    border: none;
+                    border-radius: 5px;
+                    cursor: pointer;
+                  "
+                >
+                  اختر الصور
+                </button>
+              </div>
+              <input
+                type="file"
+                id="images"
+                name="images"
+                multiple
+                accept="image/*"
+              />
+            </div>
+            <div class="image-preview" id="imagePreview"></div>
+          </div>
+
+          <div class="form-group">
+            <div class="checkbox-group">
+              <input
+                type="checkbox"
+                id="featured"
+                name="featured"
+                value="true"
+              />
+              <label for="featured">رحلة مميزة</label>
+            </div>
+          </div>
+
+          <div class="loading" id="loading">جاري الرفع... ⏳</div>
+
+          <button type="submit" class="btn" id="submitBtn">إضافة الرحلة</button>
+        </form>
+      </div>
+
+      <div class="tours-list">
+        <h2 style="margin-bottom: 30px; color: #333">الرحلات الموجودة</h2>
+        <div id="toursContainer">
+          <div class="loading">جاري تحميل الرحلات... ⏳</div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const API_BASE = 'http://localhost:3000/api';
+      let selectedFiles = [];
+
+      // File handling
+      document.getElementById('fileDropArea').addEventListener('click', () => {
+        document.getElementById('images').click();
+      });
+
+      document
+        .getElementById('images')
+        .addEventListener('change', handleFileSelect);
+
+      document
+        .getElementById('fileDropArea')
+        .addEventListener('dragover', (e) => {
+          e.preventDefault();
+          e.currentTarget.classList.add('dragover');
+        });
+
+      document
+        .getElementById('fileDropArea')
+        .addEventListener('dragleave', (e) => {
+          e.preventDefault();
+          e.currentTarget.classList.remove('dragover');
+        });
+
+      document.getElementById('fileDropArea').addEventListener('drop', (e) => {
+        e.preventDefault();
+        e.currentTarget.classList.remove('dragover');
+        const files = Array.from(e.dataTransfer.files);
+        handleFileSelect({ target: { files } });
+      });
+
+      function handleFileSelect(event) {
+        const files = Array.from(event.target.files);
+        selectedFiles = files.filter((file) => file.type.startsWith('image/'));
+
+        if (selectedFiles.length === 0) {
+          alert('يرجى اختيار ملفات صور صحيحة');
+          return;
+        }
+
+        displayImagePreview();
+      }
+
+      function displayImagePreview() {
+        const preview = document.getElementById('imagePreview');
+        preview.innerHTML = '';
+
+        selectedFiles.forEach((file, index) => {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            const previewItem = document.createElement('div');
+            previewItem.className = 'preview-item';
+            previewItem.innerHTML = `
+                        <img src="${e.target.result}" alt="Preview">
+                        <button type="button" class="remove-btn" onclick="removeImage(${index})">×</button>
+                    `;
+            preview.appendChild(previewItem);
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+
+      function removeImage(index) {
+        selectedFiles.splice(index, 1);
+        displayImagePreview();
+      }
+
+      // Form submission
+      document
+        .getElementById('tourForm')
+        .addEventListener('submit', async (e) => {
+          e.preventDefault();
+
+          if (selectedFiles.length === 0) {
+            showError('يرجى اختيار صور للرحلة');
+            return;
+          }
+
+          const submitBtn = document.getElementById('submitBtn');
+          const loading = document.getElementById('loading');
+
+          submitBtn.disabled = true;
+          loading.style.display = 'block';
+
+          try {
+            const formData = new FormData();
+            formData.append('title', document.getElementById('title').value);
+            formData.append('city', document.getElementById('city').value);
+            formData.append(
+              'address',
+              document.getElementById('address').value
+            );
+            formData.append(
+              'distance',
+              document.getElementById('distance').value
+            );
+            formData.append('desc', document.getElementById('desc').value);
+            formData.append('price', document.getElementById('price').value);
+            formData.append(
+              'maxGroupSize',
+              document.getElementById('maxGroupSize').value
+            );
+            formData.append(
+              'featured',
+              document.getElementById('featured').checked
+            );
+
+            selectedFiles.forEach((file) => {
+              formData.append('images', file);
+            });
+
+            const response = await fetch(`${API_BASE}/dashboard/tours`, {
+              method: 'POST',
+              body: formData,
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+              showSuccess();
+              document.getElementById('tourForm').reset();
+              selectedFiles = [];
+              displayImagePreview();
+              loadTours();
+            } else {
+              showError(data.message || 'حدث خطأ في إضافة الرحلة');
+            }
+          } catch (error) {
+            showError('حدث خطأ في الاتصال بالخادم');
+          } finally {
+            submitBtn.disabled = false;
+            loading.style.display = 'none';
+          }
+        });
+
+      // Load tours
+      async function loadTours() {
+        try {
+          const response = await fetch(`${API_BASE}/dashboard`);
+          const data = await response.json();
+
+          if (response.ok) {
+            displayTours(data.data.tours);
+          }
+        } catch (error) {
+          console.error('Error loading tours:', error);
+        }
+      }
+
+      function displayTours(tours) {
+        const container = document.getElementById('toursContainer');
+
+        if (tours.length === 0) {
+          container.innerHTML =
+            '<p style="text-align: center; color: #666;">لا توجد رحلات بعد</p>';
+          return;
+        }
+
+        container.innerHTML = tours
+          .map(
+            (tour) => `
+                <div class="tour-item">
+                    <div class="tour-images">
+                        ${tour.photos
+                          .slice(0, 3)
+                          .map(
+                            (photo) =>
+                              `<img src="${photo.url}" alt="${tour.title}" class="tour-image">`
+                          )
+                          .join('')}
+                        ${
+                          tour.photos.length > 3
+                            ? `<div style="width: 80px; height: 80px; background: #eee; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold;">+${
+                                tour.photos.length - 3
+                              }</div>`
+                            : ''
+                        }
+                    </div>
+                    <div class="tour-info" style="flex: 1;">
+                        <h3>${tour.title}</h3>
+                        <p><strong>المدينة:</strong> ${tour.city}</p>
+                        <p><strong>السعر:</strong> $${tour.price}</p>
+                        <p><strong>المجموعة القصوى:</strong> ${
+                          tour.maxGroupSize
+                        } أشخاص</p>
+                        <p style="color: #666; font-size: 14px; margin-top: 10px;">${tour.desc.substring(
+                          0,
+                          100
+                        )}...</p>
+                        ${
+                          tour.featured
+                            ? '<span style="background: #667eea; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px;">مميز</span>'
+                            : ''
+                        }
+                    </div>
+                </div>
+            `
+          )
+          .join('');
+      }
+
+      function showSuccess() {
+        const msg = document.getElementById('successMessage');
+        msg.style.display = 'block';
+        setTimeout(() => (msg.style.display = 'none'), 3000);
+      }
+
+      function showError(message) {
+        const msg = document.getElementById('errorMessage');
+        msg.textContent = message;
+        msg.style.display = 'block';
+        setTimeout(() => (msg.style.display = 'none'), 5000);
+      }
+
+      // Load tours on page load
+      document.addEventListener('DOMContentLoaded', loadTours);
+    </script>
+  </body>
+</html>
