@@ -33,7 +33,7 @@ const getAll = (User) =>
 const getOne = (User) =>
   catchAsync(async (req, res, next) => {
     const user = await User.findById(req.params.id).populate('bookings');
-    console.log('user', user);
+    console.log('user454545454545454545', user);
     if (!user) {
       return next(new AppError('No user found', 404, httpStatusText.NOT_FOUND));
     }

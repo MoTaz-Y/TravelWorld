@@ -3,9 +3,11 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import '../styles/login.css';
 import registerImg from '../assets/images/register.png';
 import userIcon from '../assets/images/user.png';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { AuthContext } from '../context/AuthContext';
 import { BASE_URL } from '../utils/config';
 import { validateOTP } from '../utils/validator.js';
+// import process from 'process'; // REMOVE this import
 
 const OTPVerification = () => {
   const [otp, setOtp] = useState('');
@@ -15,9 +17,21 @@ const OTPVerification = () => {
   const [resendLoading, setResendLoading] = useState(false);
   const [countdown, setCountdown] = useState(60);
 
+  const { dispatch } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
-  const email = location.state?.email;
+
+  const email = location.state?.email || '';
+  const message = location.state?.message || '';
+
+  // Auto-focus on OTP input
+  useEffect(() => {
+    const otpInput = document.getElementById('otp');
+    if (otpInput) {
+      otpInput.focus();
+    }
+  }, []);
+
   useEffect(() => {
     if (!email) {
       navigate('/register');
@@ -38,22 +52,20 @@ const OTPVerification = () => {
     return () => clearInterval(timer);
   }, [email, navigate]);
 
-  const handleChange = (e) => {
-    const value = e.target.value.replace(/\D/g, '').slice(0, 6); // Only numbers, max 6 digits
-    setOtp(value);
-
-    if (value.length === 6) {
+  const handleOtpChange = (e) => {
+    const value = e.target.value;
+    // Only allow numbers and limit to 6 digits
+    if (/^\d*$/.test(value) && value.length <= 6) {
+      setOtp(value);
       const { valid, message } = validateOTP(value);
       setOtpMsg(message);
       setOtpValid(valid);
-    } else {
-      setOtpValid(null);
-      setOtpMsg('');
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!otpValid || otp.length !== 6) {
       setOtpMsg('Please enter a valid 6-digit OTP');
       setOtpValid(false);
@@ -63,6 +75,10 @@ const OTPVerification = () => {
     setLoading(true);
 
     try {
+      console.log('🔍 Sending OTP verification request...');
+      console.log('📧 Email:', email);
+      console.log('🔢 OTP:', otp);
+
       const res = await fetch(`${BASE_URL}/users/verify-otp`, {
         method: 'POST',
         headers: {
@@ -72,17 +88,31 @@ const OTPVerification = () => {
       });
 
       const data = await res.json();
+      console.log('📋 Server response:', data);
 
       if (res.ok) {
-        // Store user data and token
-        localStorage.setItem('user', JSON.stringify(data.data));
+        // Update user data in localStorage and context
+        const userData = {
+          ...data.data,
+          isVerified: true, // Ensure verification status is set
+        };
+
+        localStorage.removeItem('user');
+        localStorage.setItem('user', JSON.stringify(userData));
+
+        // Update AuthContext
+        dispatch({ type: 'LOGIN_SUCCESS', payload: userData });
+
+        console.log('✅ User verified and logged in:', userData);
         alert('Email verified successfully! Welcome to TravelWorld!');
-        navigate('/home');
+        // navigate('/home');
       } else {
+        console.log('❌ Verification failed:', data.message);
         setOtpMsg(data.message || 'Verification failed');
         setOtpValid(false);
       }
     } catch (error) {
+      console.log('❌ Network error:', error);
       setOtpMsg('Network error. Please try again.');
       setOtpValid(false);
     } finally {
@@ -96,6 +126,7 @@ const OTPVerification = () => {
     setResendLoading(true);
 
     try {
+      console.log('🔄 Resending OTP...');
       const res = await fetch(`${BASE_URL}/users/resend-otp`, {
         method: 'POST',
         headers: {
@@ -105,13 +136,17 @@ const OTPVerification = () => {
       });
 
       const data = await res.json();
+      console.log('📋 Resend response:', data);
+
       if (res.ok) {
         alert('OTP sent successfully! Please check your email.');
         setCountdown(60);
       } else {
+        console.log('❌ Resend failed:', data.message);
         alert(data.message || 'Failed to resend OTP');
       }
     } catch (error) {
+      console.log('❌ Resend network error:', error);
       alert('Network error. Please try again.');
     } finally {
       setResendLoading(false);
@@ -121,6 +156,7 @@ const OTPVerification = () => {
   if (!email) {
     return null; // Will redirect in useEffect
   }
+
   return (
     <section>
       <Container>
@@ -130,7 +166,7 @@ const OTPVerification = () => {
               <div className='login__img'>
                 <img src={registerImg} alt='verification' />
               </div>
-              <div className='login__form'>
+              <div className='register__form'>
                 <div className='user'>
                   <img src={userIcon} alt='user' />
                 </div>
@@ -147,6 +183,24 @@ const OTPVerification = () => {
                   <strong>{email}</strong>
                 </p>
 
+                {/* Development mode info - Check for development mode without process.env */}
+                {/* Development mode info is removed to avoid client-side process.env usage */}
+                {/* {process.env.NODE_ENV === 'development' && (
+                  <div
+                    style={{
+                      backgroundColor: '#e8f4f8',
+                      padding: '10px',
+                      borderRadius: '5px',
+                      marginBottom: '20px',
+                      textAlign: 'center',
+                      fontSize: '12px',
+                      color: '#0066cc',
+                    }}
+                  >
+                    🔧 Development Mode: Check console for OTP code
+                  </div>
+                )} */}
+
                 <Form onSubmit={handleSubmit}>
                   <FormGroup className='form__group-login'>
                     <input
@@ -154,11 +208,11 @@ const OTPVerification = () => {
                       placeholder='Enter 6-digit OTP'
                       id='otp'
                       value={otp}
-                      onChange={handleChange}
+                      onChange={handleOtpChange}
                       maxLength={6}
                       style={{
                         textAlign: 'center',
-                        fontSize: '24px',
+                        fontSize: '16px',
                         letterSpacing: '8px',
                         fontWeight: 'bold',
                       }}

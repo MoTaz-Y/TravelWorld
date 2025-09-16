@@ -3,9 +3,8 @@ import { Container, Row, Button } from 'reactstrap';
 import { Link, NavLink } from 'react-router-dom';
 import logo from '../../assets/images/logo.png';
 import { AuthContext } from '../../context/AuthContext';
-import { BASE_URL } from '../../utils/config';
+// import { BASE_URL } from '../../utils/config';
 import { useNavigate } from 'react-router-dom';
-
 import './header.css';
 const nav__links = [
   {
@@ -94,58 +93,25 @@ const Header = () => {
               <div className='nav__btns d-flex align-items-center gap-4'>
                 {user ? (
                   <>
-                    <li className='nav__item'>
-                      <span className='nav__user'>
-                        مرحباً {user.userName}
-                        {user.role && (
-                          <span className={`role-badge role-${user.role}`}>
-                            {user.role === 'admin'
-                              ? 'Admin'
-                              : user.role === 'manager'
-                              ? 'Manager'
-                              : user.role === 'guide'
-                              ? 'Guide'
-                              : 'User'}
-                          </span>
-                        )}
-                      </span>
-                    </li>
-
-                    {/* Dashboard button for authorized users */}
-                    {(user.role === 'admin' ||
-                      user.role === 'manager' ||
-                      user.role === 'guide') && (
-                      <li className='nav__item'>
-                        <Link
-                          to='/dashboard'
-                          className='nav__link dashboard-link'
-                        >
-                          Dashboard
-                        </Link>
-                      </li>
-                    )}
-
-                    <li className='nav__item'>
-                      <Button
-                        onClick={handleLogout}
-                        className='nav__link logout-btn'
-                      >
-                        Logout
-                      </Button>
-                    </li>
+                    <Link
+                      to='/profile'
+                      className='d-flex align-items-center gap-2 text-decoration-none text-black fw-bold'
+                    >
+                      <i className='ri-user-line'></i>
+                      <h6>{user.userName}</h6>
+                    </Link>
+                    <Button className='btn btn-dark' onClick={handleLogout}>
+                      Logout
+                    </Button>
                   </>
                 ) : (
                   <>
-                    <li className='nav__item'>
-                      <Link to='/login' className='nav__link'>
-                        Login
-                      </Link>
-                    </li>
-                    <li className='nav__item'>
-                      <Link to='/register' className='nav__link register-btn'>
-                        Register
-                      </Link>
-                    </li>
+                    <Button className='btn secondary__btn'>
+                      <Link to='/login'>Login</Link>
+                    </Button>
+                    <Button className='btn primary__btn'>
+                      <Link to='/register'>register</Link>
+                    </Button>
                   </>
                 )}
               </div>

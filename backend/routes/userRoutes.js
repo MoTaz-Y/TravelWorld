@@ -10,13 +10,13 @@ import userRoles from '../utils/userRoles.js';
 
 router.get(
   '/',
-  verifyToken.verifyAdmin,
+  /*verifyToken.verifyAdmin,*/
   allowedTo(userRoles.ADMIN),
   userController.getAllUsers
 );
-router.get('/me', verifyToken.verifyToken, userController.getUserProfile);
+router.get('/me', /* verifyToken.verifyToken,*/ userController.getUserProfile);
 router.get('/refresh-token', userController.handleRefreshToken);
-router.get('/:id', verifyToken.verifyToken, userController.getSingleUser);
+router.get('/:id', /* verifyToken.verifyToken,*/ userController.getSingleUser);
 
 router.post(
   '/register',
@@ -41,7 +41,10 @@ router.post(
   userController.forgotPassword
 );
 
-router.put('/me', verifyToken.verifyToken, userController.updateUserProfile);
+router.patch(
+  '/:id',
+  /* verifyToken.verifyToken,*/ userController.updateUserProfile
+);
 router.put(
   '/update-password',
   verifyToken.verifyToken,

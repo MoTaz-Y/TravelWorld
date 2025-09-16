@@ -8,6 +8,7 @@ const Settings = ({ user }) => {
     email: user?.email || '',
     phone: user?.phone || '',
   });
+  console.log('user from settings', user);
 
   const [editing, setEditing] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -24,29 +25,35 @@ const Settings = ({ user }) => {
     setLoading(true);
     setError('');
     setSuccess('');
+    console.log('formData from settings', formData);
     try {
       const res = await fetch(`${BASE_URL}/users/${user._id}`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: { 'content-type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify(formData),
       });
-
+      console.log('res', res);
       if (!res.ok) throw new Error('Update failed, please try again.');
 
       const data = await res.json();
-      setSuccess('Profile updated successfully');
-      console.log('Updated User:', data);
+      console.log('Response data:', data); // للتأكد من شكل البيانات
 
-      setFormData({
-        userName: data.data.user.userName,
-        email: data.data.user.email,
-        phone: data.data.user.phone,
-      });
-
-      setEditing(false);
+      if (data.data && data.data.userName) {
+        // تحديث النموذج بالبيانات المباشرة من الاستجابة
+        setFormData({
+          userName: data.data.userName,
+          email: data.data.email,
+          phone: data.data.phone || '',
+        });
+        setSuccess('Profile updated successfully');
+        setEditing(false);
+      } else {
+        throw new Error('Invalid response format from server');
+      }
     } catch (err) {
       setError(err.message);
+      console.error('Update error:', err);
     } finally {
       setLoading(false);
     }
@@ -124,7 +131,12 @@ const Settings = ({ user }) => {
           </div>
 
           <div className='settings__actions'>
-            <button type='submit' className='save-btn' disabled={loading}>
+            <button
+              type='submit'
+              onClick={handleSubmit}
+              className='save-btn'
+              disabled={loading}
+            >
               {loading ? 'Saving...' : 'Save'}
             </button>
 

@@ -65,13 +65,54 @@ const Login = () => {
 
       const data = await res.json();
 
+      if (res.status === 404) {
+        // Email not found - redirect to register with email pre-filled
+        alert(
+          'This email is not registered. You will be redirected to registration page.'
+        );
+        navigate('/register', {
+          state: {
+            email: credentials.email,
+            message: 'Please complete your registration with this email.',
+          },
+        });
+        return;
+      }
+
       if (res.status === 403) {
-        // User not verified - redirect to OTP verification
+        // User not verified - send OTP and redirect to verification
+        try {
+          // Send OTP first
+          const otpRes = await fetch(`${BASE_URL}/users/resend-otp`, {
+            method: 'POST',
+            headers: {
+              'content-type': 'application/json',
+            },
+            body: JSON.stringify({ email: credentials.email }),
+          });
+
+          if (otpRes.ok) {
+            alert(
+              'Verification code sent to your email. Please check your inbox.'
+            );
+          } else {
+            alert('Failed to send verification code. Please try again.');
+            setLoading(false);
+            return;
+          }
+        } catch (otpError) {
+          console.error('Error sending OTP:', otpError);
+          alert('Failed to send verification code. Please try again.');
+          setLoading(false);
+          return;
+        }
+
+        // Redirect to OTP verification page
         navigate('/verify-otp', {
           state: {
             email: credentials.email,
             message:
-              'Your account is not verified. Please check your email for the verification code.',
+              'Your account is not verified. Please enter the verification code sent to your email.',
           },
         });
         return;
@@ -83,8 +124,16 @@ const Login = () => {
         return;
       }
 
+      // Success - clear any existing data and set new data
+      localStorage.removeItem('user');
+      localStorage.setItem('user', JSON.stringify(data.data));
+
       dispatch({ type: 'LOGIN_SUCCESS', payload: data.data });
-      navigate('/home');
+
+      // Force a small delay to ensure context updates before navigation
+      setTimeout(() => {
+        navigate('/home');
+      }, 100);
     } catch (err) {
       dispatch({
         type: 'LOGIN_FAILURE',

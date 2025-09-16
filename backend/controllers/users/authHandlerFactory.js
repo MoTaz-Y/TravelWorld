@@ -102,16 +102,29 @@ const registerUser = (User) =>
     // Send OTP email
     try {
       await sendOTPEmail(email, otp);
+      console.log('✅ OTP email sent to:', email);
     } catch (error) {
-      // If email fails, delete user and return error
-      await User.findByIdAndDelete(newUser._id);
-      return next(
-        new AppError(
-          'Failed to send verification email. Please check your email address.',
-          500,
-          httpStatusText.INTERNAL_SERVER_ERROR
-        )
-      );
+      console.log('❌ Failed to send OTP email:', error.message);
+
+      // In development mode, don't fail the registration
+      if (
+        process.env.SKIP_EMAIL_VERIFICATION === 'true' ||
+        process.env.NODE_ENV === 'development'
+      ) {
+        console.log(
+          '⚠️  Development mode: Continuing registration despite email failure'
+        );
+      } else {
+        // If not in development mode, fail the registration
+        await User.findByIdAndDelete(newUser._id);
+        return next(
+          new AppError(
+            'Failed to send verification email. Please check your email address or try again later.',
+            500,
+            httpStatusText.INTERNAL_SERVER_ERROR
+          )
+        );
+      }
     }
 
     res.status(201).json({
@@ -131,6 +144,8 @@ const registerUser = (User) =>
 const verifyOTP = (User) =>
   catchAsync(async (req, res, next) => {
     const { email, otp } = req.body;
+    console.log('📧 Verifying OTP for:', email);
+    console.log('🔢 OTP entered:', otp);
 
     if (!email || !otp) {
       return next(
@@ -143,13 +158,27 @@ const verifyOTP = (User) =>
     }
 
     const user = await User.findOne({ email });
+    console.log('👤 User found:', user ? 'Yes' : 'No');
+
     if (!user) {
+      console.log('❌ User not found');
       return next(
         new AppError('User not found', 404, httpStatusText.NOT_FOUND)
       );
     }
 
+    // Debug user state
+    console.log('🔍 User verification status:', {
+      isVerified: user.isVerified,
+      hasOTP: !!user.otp,
+      otpExpiry: user.otpExpiry,
+      currentTime: new Date(),
+      otpExpired: user.otpExpiry ? new Date() > user.otpExpiry : true,
+    });
+
+    // Check if user is already verified
     if (user.isVerified) {
+      console.log('✅ User is already verified');
       return next(
         new AppError(
           'User is already verified',
@@ -159,8 +188,82 @@ const verifyOTP = (User) =>
       );
     }
 
+    // Check if user has OTP data
+    if (!user.otp || !user.otpExpiry) {
+      console.log('❌ User has no OTP data');
+
+      // In development mode, auto-verify if SKIP_EMAIL_VERIFICATION is true
+      if (process.env.SKIP_EMAIL_VERIFICATION === 'true') {
+        console.log('🔧 Development mode: Auto-verifying user');
+        user.isVerified = true;
+        user.otp = undefined;
+        user.otpExpiry = undefined;
+
+        try {
+          const savedUser = await user.save({ validateBeforeSave: false });
+          console.log(
+            '✅ User verification status after save:',
+            savedUser.isVerified
+          );
+
+          if (!savedUser.isVerified) {
+            throw new Error('Failed to verify user');
+          }
+
+          const token = generateToken(
+            savedUser._id,
+            savedUser.role,
+            savedUser.email,
+            savedUser.userName
+          );
+
+          return res.status(200).json({
+            status: 'success',
+            message:
+              'Auto-verified in development mode. Welcome to TravelWorld!',
+            data: {
+              _id: savedUser._id,
+              userName: savedUser.userName,
+              email: savedUser.email,
+              phone: savedUser.phone || null,
+              role: savedUser.role,
+              token: token,
+              isVerified: savedUser.isVerified,
+            },
+          });
+        } catch (error) {
+          console.error('❌ Error during user verification:', error);
+          return next(
+            new AppError(
+              'Failed to verify user',
+              500,
+              httpStatusText.INTERNAL_SERVER_ERROR
+            )
+          );
+        }
+      }
+
+      return next(
+        new AppError(
+          'No verification code found. Please register again.',
+          400,
+          httpStatusText.BAD_REQUEST
+        )
+      );
+    }
+
     // Check if OTP is expired
-    if (new Date() > user.otpExpiry) {
+    const now = new Date();
+    const otpExpiry = new Date(user.otpExpiry);
+
+    console.log('⏰ OTP Expiry check:', {
+      currentTime: now,
+      otpExpiry: otpExpiry,
+      isExpired: now > otpExpiry,
+    });
+
+    if (now > otpExpiry) {
+      console.log('⏰ OTP has expired');
       return next(
         new AppError(
           'OTP has expired. Please request a new one.',
@@ -171,16 +274,25 @@ const verifyOTP = (User) =>
     }
 
     // Check if OTP matches
+    console.log('🔍 OTP Comparison:', {
+      storedOTP: user.otp,
+      enteredOTP: otp,
+      match: user.otp === otp,
+    });
+
     if (user.otp !== otp) {
+      console.log('❌ OTP does not match');
       return next(new AppError('Invalid OTP', 400, httpStatusText.BAD_REQUEST));
     }
+
+    console.log('✅ OTP verified successfully');
 
     // Mark user as verified
     user.isVerified = true;
     user.otp = undefined;
     user.otpExpiry = undefined;
     await user.save();
-
+    console.log('✅ User verified successfully', user);
     // Send welcome email
     try {
       await sendWelcomeEmail(user.email, user.userName);
@@ -188,7 +300,7 @@ const verifyOTP = (User) =>
       console.error('Failed to send welcome email:', error);
     }
 
-    const token = generateToken(user._id);
+    const token = generateToken(user._id, user.role, user.email, user.userName);
 
     res.status(200).json({
       status: 'success',
@@ -208,6 +320,7 @@ const verifyOTP = (User) =>
 const resendOTP = (User) =>
   catchAsync(async (req, res, next) => {
     const { email } = req.body;
+    console.log('📧 Resending OTP for:', email);
 
     if (!email) {
       return next(
@@ -216,6 +329,8 @@ const resendOTP = (User) =>
     }
 
     const user = await User.findOne({ email });
+    console.log('👤 User found:', user ? 'Yes' : 'No');
+
     if (!user) {
       return next(
         new AppError('User not found', 404, httpStatusText.NOT_FOUND)
@@ -223,6 +338,7 @@ const resendOTP = (User) =>
     }
 
     if (user.isVerified) {
+      console.log('✅ User is already verified');
       return next(
         new AppError(
           'User is already verified',
@@ -236,6 +352,9 @@ const resendOTP = (User) =>
     const otp = generateOTP();
     const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
+    console.log('🔢 New OTP generated:', otp);
+    console.log('⏰ New OTP expiry:', otpExpiry);
+
     user.otp = otp;
     user.otpExpiry = otpExpiry;
     await user.save();
@@ -243,14 +362,22 @@ const resendOTP = (User) =>
     // Send OTP email
     try {
       await sendOTPEmail(email, otp);
+      console.log('✅ OTP email sent successfully');
     } catch (error) {
-      return next(
-        new AppError(
-          'Failed to send verification email',
-          500,
-          httpStatusText.INTERNAL_SERVER_ERROR
-        )
-      );
+      console.error('❌ Failed to send OTP email:', error);
+
+      // In development mode, don't fail
+      if (process.env.SKIP_EMAIL_VERIFICATION === 'true') {
+        console.log('⚠️  Development mode: Ignoring email error');
+      } else {
+        return next(
+          new AppError(
+            'Failed to send verification email',
+            500,
+            httpStatusText.INTERNAL_SERVER_ERROR
+          )
+        );
+      }
     }
 
     res.status(200).json({
@@ -465,12 +592,15 @@ const getUserProfile = (User) =>
 // localhost:3000/api/users/me Put
 const updateUserProfile = (User) =>
   catchAsync(async (req, res, next) => {
-    const { _id } = req.user;
-    validateMongodbId(_id);
-    const user = await User.findByIdAndUpdate(_id, req.body, {
+    console.log('req.params', req.body);
+    const { id } = req.params;
+    console.log('user', id);
+    // validateMongodbId(id);
+    const user = await User.findByIdAndUpdate(id, req.body, {
       new: true,
       runValidators: true,
     });
+    console.log('user010100000000000000000000', user);
     if (!user) {
       return next(
         new AppError('User not found', 400, httpStatusText.BAD_REQUEST)

@@ -87,83 +87,94 @@ const UserBookings = ({ bookings }) => {
       <h3>My Bookings</h3>
       {error && <p className='error'>{error}</p>}
       <div className='user__bookings-list'>
-        {localBookings?.map((booking) => (
-          <div className='booking__item' key={booking._id}>
-            <div className='booking__header'>
-              <h4>{booking.tourName}</h4>
-              <p>{moment(booking.bookAt).format('MMM Do YYYY')}</p>
-            </div>
-
-            {editingId === booking._id ? (
-              <form
-                className='booking__form'
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  handleSubmit(booking._id);
-                }}
-              >
-                <input
-                  type='text'
-                  name='fullName'
-                  value={formData.fullName}
-                  onChange={handleChange}
-                  placeholder='Full Name'
-                  required
-                />
-                <input
-                  type='number'
-                  name='phone'
-                  value={formData.phone}
-                  onChange={handleChange}
-                  placeholder='Phone'
-                  required
-                />
-                <input
-                  type='number'
-                  name='guestSize'
-                  value={formData.guestSize}
-                  onChange={handleChange}
-                  placeholder='Guests'
-                  required
-                />
-                <button type='submit' disabled={loading}>
-                  {loading ? 'Saving...' : 'Save'}
-                </button>
-              </form>
-            ) : (
-              <div className='booking__body'>
-                <p>{booking.fullName}</p>
-                <p>{booking.phone}</p>
-                <p>{booking.guestSize} Guests</p>
+        {localBookings && localBookings.length > 0 ? (
+          localBookings.map((booking) => (
+            <div className='booking__item' key={booking._id}>
+              <div className='booking__header'>
+                <h4>{booking.tourName}</h4>
+                <p>{moment(booking.bookAt).format('MMM Do YYYY')}</p>
               </div>
-            )}
 
-            <div className='booking__actions'>
-              {editingId !== booking._id && (
-                <i
-                  className='ri-edit-2-line booking__btn edit'
-                  style={{
-                    fontSize: '1.2rem',
-                    color: '#0b5ed7',
-                    cursor: 'pointer',
-                    marginRight: '10px',
+              {editingId === booking._id ? (
+                <form
+                  className='booking__form'
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    handleSubmit(booking._id);
                   }}
-                  onClick={() => handleEditClick(booking)}
-                ></i>
+                >
+                  <input
+                    type='text'
+                    name='fullName'
+                    value={formData.fullName}
+                    onChange={handleChange}
+                    placeholder='Full Name'
+                    required
+                  />
+                  <input
+                    type='number'
+                    name='phone'
+                    value={formData.phone}
+                    onChange={handleChange}
+                    placeholder='Phone'
+                    required
+                  />
+                  <input
+                    type='number'
+                    name='guestSize'
+                    value={formData.guestSize}
+                    onChange={handleChange}
+                    placeholder='Guests'
+                    required
+                  />
+                  <button type='submit' disabled={loading}>
+                    {loading ? 'Saving...' : 'Save'}
+                  </button>
+                </form>
+              ) : (
+                <div className='booking__body'>
+                  <p>{booking.fullName}</p>
+                  <p>{booking.phone}</p>
+                  <p>{booking.guestSize} Guests</p>
+                </div>
               )}
 
-              <i
-                className='ri-delete-bin-6-line booking__btn delete'
-                style={{
-                  fontSize: '1.2rem',
-                  color: '#d9534f',
-                  cursor: 'pointer',
-                }}
-                onClick={() => handleDelete(booking._id)}
-              ></i>
+              <div className='booking__actions'>
+                {editingId !== booking._id && (
+                  <i
+                    className='ri-edit-2-line booking__btn edit'
+                    style={{
+                      fontSize: '1.2rem',
+                      color: '#0b5ed7',
+                      cursor: 'pointer',
+                      marginRight: '10px',
+                    }}
+                    onClick={() => handleEditClick(booking)}
+                  ></i>
+                )}
+
+                <i
+                  className='ri-delete-bin-6-line booking__btn delete'
+                  style={{
+                    fontSize: '1.2rem',
+                    color: '#d9534f',
+                    cursor: 'pointer',
+                  }}
+                  onClick={() => handleDelete(booking._id)}
+                ></i>
+              </div>
             </div>
+          ))
+        ) : (
+          <div className='no-bookings'>
+            <i
+              className='ri-calendar-2-line'
+              style={{ fontSize: '3rem', color: '#ccc', marginBottom: '1rem' }}
+            ></i>
+            <h4>No bookings yet</h4>
+            <p>You have not submitted any bookings with us yet</p>
           </div>
-        ))}
+        )}
       </div>
     </div>
   );
