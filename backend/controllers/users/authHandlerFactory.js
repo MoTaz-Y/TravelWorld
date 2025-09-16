@@ -196,51 +196,27 @@ const verifyOTP = (User) =>
       if (process.env.SKIP_EMAIL_VERIFICATION === 'true') {
         console.log('🔧 Development mode: Auto-verifying user');
         user.isVerified = true;
-        user.otp = undefined;
-        user.otpExpiry = undefined;
+        await user.save();
 
-        try {
-          const savedUser = await user.save({ validateBeforeSave: false });
-          console.log(
-            '✅ User verification status after save:',
-            savedUser.isVerified
-          );
+        const token = generateToken(
+          user._id,
+          user.role,
+          user.email,
+          user.userName
+        );
 
-          if (!savedUser.isVerified) {
-            throw new Error('Failed to verify user');
-          }
-
-          const token = generateToken(
-            savedUser._id,
-            savedUser.role,
-            savedUser.email,
-            savedUser.userName
-          );
-
-          return res.status(200).json({
-            status: 'success',
-            message:
-              'Auto-verified in development mode. Welcome to TravelWorld!',
-            data: {
-              _id: savedUser._id,
-              userName: savedUser.userName,
-              email: savedUser.email,
-              phone: savedUser.phone || null,
-              role: savedUser.role,
-              token: token,
-              isVerified: savedUser.isVerified,
-            },
-          });
-        } catch (error) {
-          console.error('❌ Error during user verification:', error);
-          return next(
-            new AppError(
-              'Failed to verify user',
-              500,
-              httpStatusText.INTERNAL_SERVER_ERROR
-            )
-          );
-        }
+        return res.status(200).json({
+          status: 'success',
+          message: 'Auto-verified in development mode. Welcome to TravelWorld!',
+          data: {
+            _id: user._id,
+            userName: user.userName,
+            email: user.email,
+            phone: user.phone || null,
+            role: user.role,
+            token: token,
+          },
+        });
       }
 
       return next(
@@ -292,7 +268,8 @@ const verifyOTP = (User) =>
     user.otp = undefined;
     user.otpExpiry = undefined;
     await user.save();
-    console.log('✅ User verified successfully', user);
+    console.log('this is the user', user);
+
     // Send welcome email
     try {
       await sendWelcomeEmail(user.email, user.userName);
@@ -592,11 +569,9 @@ const getUserProfile = (User) =>
 // localhost:3000/api/users/me Put
 const updateUserProfile = (User) =>
   catchAsync(async (req, res, next) => {
-    console.log('req.params', req.body);
-    const { id } = req.params;
-    console.log('user', id);
-    // validateMongodbId(id);
-    const user = await User.findByIdAndUpdate(id, req.body, {
+    const { _id } = req.user;
+    validateMongodbId(_id);
+    const user = await User.findByIdAndUpdate(_id, req.body, {
       new: true,
       runValidators: true,
     });

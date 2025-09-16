@@ -105,7 +105,7 @@ const OTPVerification = () => {
 
         console.log('✅ User verified and logged in:', userData);
         alert('Email verified successfully! Welcome to TravelWorld!');
-        // navigate('/home');
+        navigate('/home');
       } else {
         console.log('❌ Verification failed:', data.message);
         setOtpMsg(data.message || 'Verification failed');
