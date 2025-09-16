@@ -27,7 +27,7 @@ config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 const corsOptions = {
-  origin: ['http://localhost:5173', 'http://localhost:3000'], // ['http://localhost:5173', 'http://localhost:3000'] ['https://travel-world-chi.vercel.app']
+  origin: ['https://travel-world-chi.vercel.app'], // ['http://localhost:5173', 'http://localhost:3000'] ['https://travel-world-chi.vercel.app']
   credentials: true,
 };
 
